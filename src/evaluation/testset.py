@@ -15,6 +15,8 @@ _REQUIRED_COLUMNS = {
     "authors_joined",
     "published",
     "categories_joined",
+    "age_days",
+    "text_for_embedding",
 }
 _MINIMUM_DOCUMENTS = 4
 
@@ -34,6 +36,22 @@ def _required_text(row: pd.Series, column: str) -> str:
     return normalized
 
 
+def _assert_stable_paper_ids(df: pd.DataFrame) -> None:
+    """Fail before writing an evaluation set when clean IDs are not stable."""
+    missing_count = int(_blank_mask(df["paper_id"]).sum())
+    if missing_count:
+        raise ValueError(f"paper_id is not stable: {missing_count} cleaned rows have a missing ID.")
+
+    normalized_ids = df["paper_id"].astype("string").str.strip().str.lower()
+    duplicate_mask = normalized_ids.duplicated(keep=False)
+    if duplicate_mask.any():
+        duplicate_ids = sorted(set(normalized_ids[duplicate_mask].astype(str)))
+        raise ValueError(
+            "paper_id is not stable: duplicate cleaned IDs found: "
+            + ", ".join(duplicate_ids[:10])
+        )
+
+
 def build_test_set(df: pd.DataFrame, output_path) -> list[dict[str, Any]]:
     """Build a deterministic, auditable evaluation set from cleaned papers.
 
@@ -44,10 +62,15 @@ def build_test_set(df: pd.DataFrame, output_path) -> list[dict[str, Any]]:
     missing_columns = sorted(_REQUIRED_COLUMNS.difference(df.columns))
     if missing_columns:
         raise ValueError(f"Clean dataframe is missing required columns: {', '.join(missing_columns)}")
+    _assert_stable_paper_ids(df)
+
     candidates = df.copy()
     eligible = pd.Series(True, index=candidates.index)
     for column in _REQUIRED_COLUMNS:
         eligible &= ~_blank_mask(candidates[column])
+
+    candidates["_published_sort"] = pd.to_datetime(candidates["published"], errors="coerce", utc=True)
+    eligible &= candidates["_published_sort"].notna()
     candidates = candidates.loc[eligible].copy()
     if len(candidates) < _MINIMUM_DOCUMENTS:
         raise ValueError(
@@ -55,7 +78,6 @@ def build_test_set(df: pd.DataFrame, output_path) -> list[dict[str, Any]]:
             f"received {len(candidates)} eligible rows out of {len(df)}."
         )
 
-    candidates["_published_sort"] = pd.to_datetime(candidates["published"], errors="coerce", utc=True)
     candidates = candidates.sort_values(
         by=["_published_sort", "paper_id"],
         ascending=[False, True],
@@ -77,12 +99,17 @@ def build_test_set(df: pd.DataFrame, output_path) -> list[dict[str, Any]]:
         # using the clean paper_id also works when a title contains apostrophes.
         label = f"paper '{paper_id}' titled \"{title}\""
         questions = (
-            ("summary", f"What is the main point summarized for {label}?", summary),
-            ("authors", f"Who authored {label}?", authors),
-            ("date", f"When was {label} published?", published),
-            ("categories", f"What categories are assigned to {label}?", categories),
+            ("summary", f"What is the main point summarized for {label}?", summary, "summary"),
+            ("authors", f"Who authored {label}?", authors, "authors_joined"),
+            ("date", f"When was {label} published?", published, "published"),
+            (
+                "categories",
+                f"What categories are recorded for {label}?",
+                categories,
+                "categories_joined",
+            ),
         )
-        for question_type, question, ground_truth in questions:
+        for question_type, question, ground_truth, ground_truth_field in questions:
             test_set.append(
                 {
                     "id": f"q{row_number:02d}-{question_type}",
@@ -90,6 +117,7 @@ def build_test_set(df: pd.DataFrame, output_path) -> list[dict[str, Any]]:
                     "question": question,
                     "ground_truth": ground_truth,
                     "ground_truth_doc_ids": [paper_id],
+                    "ground_truth_source": f"clean.{ground_truth_field}",
                 }
             )
 
