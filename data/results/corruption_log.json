@@ -1,0 +1,166 @@
+[
+  {
+    "type": "drop_latest",
+    "params": {
+      "count": 2
+    },
+    "affected_ids": [
+      "10.2118/234689-pa",
+      "10.1111/exsy.70341"
+    ]
+  },
+  {
+    "type": "blank_summary",
+    "record_id": "10.21203/rs.3.rs-9770645/v1",
+    "before": "Abstract Background. Insurance penetration in Kenya stands at roughly 2.3% of GDP, well below the global average of 7.4%. Documented barriers include low financial literacy, affordability, cultural resistance and limited access to trusted, locally relevant information. Large Language Models (LLMs) could in principle deliver scalable, personalised information, but off-the-shelf models perform poorly on jurisdiction-specific regulatory content and are prone to hallucination in low-resource domains. Objective. We investigate how a mid-sized open-weights LLM can be adapted to a low-resource, highly regulated domain using two complementary techniques — parameter-efficient supervised fine-tuning and Retrieval-Augmented Generation (RAG) — and we quantify the marginal value of each technique and of their combination. Methods. A question–answer (QA) corpus was curated from primary regulatory sources (Insurance Regula- tory Authority of Kenya, Association of Kenya Insurers) and reformatted into JSONL. Meta’s LLaMA-2- 13B-chat was used as the base model. We compared four configurations: (i) base model; (ii) base + LoRA fine-tuning; (iii) base + RAG over a Chroma vector index; and (iv) fine-tuning + RAG. Outputs were graded by GPT-4 (with a human-validated paraphrased test set) on accuracy (1–10), succinctness (5-level rubric mapped to a numerical scale) and relevancy (1–10). Results. The combined fine-tuning + RAG configuration achieved the best performance on all three metrics (accuracy 6.803, succinctness 7.03, relevancy 6.89), versus the base model (1.229, 3.78, 1.98). Fine-tuning alone yielded only marginal accuracy gains and a measurable drop in relevancy, indicating that parameter adaptation without external knowledge grounding can make the model more confident without making it more correct. RAG contributed the largest single improvement. Contribution. The paper offers (a) a reproducible recipe for adapting open-weights LLMs to a low-resource regulated domain on commodity hardware; (b) empirical evidence on the relative contribution of fine-tuning vs. retrieval grounding in that setting; and (c) a discussion of the implications for AI-assisted financial inclusion in Sub-Saharan Africa.",
+    "after": ""
+  },
+  {
+    "type": "blank_summary",
+    "record_id": "10.21203/rs.3.rs-9882260/v1",
+    "before": "Abstract Large language models (LLMs) increasingly support reasoning, question answering, decision support, and retrieval-augmented knowledge work. High benchmark performance, however, does not by itself establish reliability under realistic deployment conditions. This article treats LLM reliability as a pipeline-level evaluation construct rather than a single capability score. Using a semi-systematic evidence-map design, it synthesizes 77 studies selected from a broader OpenAlex audit trail of 1,010 candidate records. The review focuses on four linked dimensions: reasoning faithfulness, factual grounding, evaluation validity, and evidence-use reliability in retrieval-augmented generation. The synthesis distinguishes answer accuracy from reasoning faithfulness, truth from source-grounded support, benchmark performance from evaluation validity, and retrieved evidence from evidence actually used during generation. Across the reviewed literature, reasoning traces can improve answer accuracy without demonstrating process faithfulness; self-correction without external feedback shows inconsistent reliability; hallucination, attribution error, and sycophancy represent separable factuality risks; benchmark scores are sensitive to contamination, saturation, and protocol variation; and retrieval-augmented generation reliability depends on retrieval relevance, source sufficiency, context utilization, attribution, and calibrated refusal. The article contributes an operational reliability-gap framework and testable propositions for evaluating interactions among reasoning, factual grounding, evaluation trust, evidence use, lateral reasoning, and equitable multilingual reliability. The framework supports reliability-centered evaluation protocols that report process verification, claim-level grounding, contamination controls, uncertainty and refusal behavior, and stratified performance across language, culture, and domain contexts.",
+    "after": ""
+  },
+  {
+    "type": "blank_summary",
+    "record_id": "10.32473/flairs.39.1.141782",
+    "before": "Mental health conditions affect over one billion individuals globally and remain challenging to assess accurately due to fragmented clinical data and subjective evaluation methods. Mental health support systems increasingly rely on large language models (LLMs) due to their capabilities in natural language understanding and response generation. While retrieval augmented generation (RAG) and agentic frameworks have improved grounded generation in several domains, there is limited understanding of how such approaches affect response quality in mental health related tasks. In particular, the impact of structured context management and autonomous refinement on clinical relevance, empathy, completeness, and safety remains underexplored. In this study, we investigate the effects of agentic RAG on the performance of multiple mental health oriented language models. We adopt a common pipeline configuration that integrates patient dialogue, structured patient history, and externally retrieved clinical knowledge. The pipeline consists of coordinated stages for patient context retrieval, context augmentation, and response generation with autonomous evaluation and iterative refinement. We conduct empirical evaluations across four mental health models under this pipeline and analyze their performance in terms of medical accuracy, empathy, completeness, safety, and overall response quality. Our results show consistent trends toward improved responses when structured context handling and agentic refinement are applied, indicating that these components influence model behavior independent of architecture. This work provides insight into how agentic RAG influences model outputs in mental health applications and highlights the importance of context engineering and quality control in LLM based support systems. These findings indicate that Agentic Context Engineering (ACE) may contribute to improved reasoning depth, contextual alignment, and patient centered response quality across diverse models. However, despite the improvements observed, the framework remains an early step toward more reliable AI assisted mental health assessment. Continued research is needed to refine model architectures, optimize prompt engineering, and expand evaluation across broader and more diverse clinical contexts to ensure safety, consistency, and real world applicability.",
+    "after": ""
+  },
+  {
+    "type": "blank_summary",
+    "record_id": "10.35314/3y9hy151",
+    "before": "Large language models have the potential to improve the quality of information services in higher education environments through responsive and natural interactions. However, LLMs are prone to generating answers that are not supported by valid knowledge sources due to knowledge cut-off limitations. This study implements Retrieval-Augmented Generation on LLMs to build an information service chatbot for the Indonesian University of Science and Technology (USTI). RAG is built using a hybrid retrieval mechanism that combines dense retrieval and sparse retrieval (BM25) through reciprocal rank fusion and is equipped with cross-encoder reranking. The knowledge base is compiled from official and public documents obtained through the USTI website. The evaluation was conducted using 13 test queries by comparing several configurations to analyze the contribution of each component. The evaluation results show that the hybrid retrieval configuration produces the best retrieval performance with Precision@3 of 71.7%, Recall@3 of 87.5%, and NDCG@3 of 96.3%. In addition, the application of RAG improved the quality of answers compared to LLM without retrieval, as shown by an increase in BERTScore-F1 from 84.8% to 89.4% and a faithfulness score of 88.8%. These findings indicate that RAG integration improves the relevance of LLM answers to source documents, with the hybrid configuration providing an optimal balance between retrieval quality and faithfulness.",
+    "after": ""
+  },
+  {
+    "type": "blank_summary",
+    "record_id": "10.21203/rs.3.rs-10012178/v1",
+    "before": "Abstract Enterprise adoption of artificial intelligence (AI) systems, including Generative AI (GenAI), Retrieval-Augmented Generation (RAG), and agentic AI, is advancing faster than many organizations can adapt their governance, audit, cybersecurity, and executive oversight practices. This paper develops a proposed integrated AI governance prioritization architecture using a design-science research approach, supported by exploratory platform-risk analysis, a reproducible platform-risk dataset, a Monte Carlo robustness assessment, a framework coverage matrix, a Governance Priority Score (GPS)-based demonstration, and a public-document relevance assessment. The primary contribution is an integrated governance decision-support architecture that uses the Enterprise AI Platform Taxonomy (EAPT) to estimate platform burden, the Enterprise AI Risk Taxonomy (EART) to organize governance-risk exposure, the Enterprise AI Governance Maturity Model (EAGM) to represent organizational readiness, and the Integrated Agentic AI Governance Framework (IAGF) to identify agentic AI oversight requirements within a unified workflow. These components are operationally connected through GPS, which links platform burden, governancerisk gaps, organizational readiness, agentic runtime-control needs, and executive decision support. The proposed architecture draws upon NIST AI RMF, NIST AI 600-1, ISO/IEC 42001, COBIT, OWASP LLM Top 10, MITRE ATLAS, the EU AI Act, and related AI governance literature. A rubric-based analytical dataset covering 19 enterprise AI platforms evaluates each platform across eight subdimensions, with final platform-risk scores computed as the arithmetic mean of data access scope, operational autonomy, tool/API integration breadth, external connectivity, governance burden, cybersecurity exposure, adoption and shadow-AI risk, and supply-chain integrity. TThe expanded scoring method produces high rank stability relative to the original final-score dataset, with Spearman’s ρ = 0.996, and remains directionally stable under coding-uncertainty stress testing; these results are interpreted only as internal coding stability and robustness, not external validation. Public evidence from U.S. government agencies, universities, healthcare systems, and financial institutions is used to assess architecture relevance and observability, not to claim organizational effectiveness. The paper contributes a bounded design-science foundation for future inter-rater reliability testing, Delphi expert validation, organizational pilots, psychometric evaluation, and dashboard usability assessment.",
+    "after": ""
+  },
+  {
+    "type": "blank_summary",
+    "record_id": "10.52060/juptik.v4i1.4318",
+    "before": "Aksesibilitas dokumen digital Fatwa Majelis Ulama Indonesia (MUI) yang terfragmentasi membuat pencarian informasi kurang efektif. Di sisi lain, sistem tanya jawab AI berbasis satu sumber dokumen (single-corpus) rentan menghasilkan jawaban tidak akurat (halusinasi) pada pertanyaan di luar domain. Penelitian ini mengembangkan Chatbot Hybrid Fatwa MUI menggunakan arsitektur Hybrid Retrieval bertingkat dengan dua sumber pengetahuan: dokumen Fatwa MUI sebagai korpus utama dan 12.370 hadis Bukhari-Muslim sebagai mekanisme cadangan (fallback). Sistem ini menerapkan pencarian semantik, verifikasi topik otomatis oleh model bahasa, dan pengalihan ke basis data hadis jika konteks fatwa dinilai tidak relevan. Hasil evaluasi menunjukkan peningkatan kesamaan makna jawaban sebesar 13,23% (dari 0,6664 menjadi 0,7546) dan peningkatan kesetiaan pada rujukan (faithfulness) sebesar 10,57% (dari 85,37% menjadi 94,39%), dengan tingkat penolakan (abstain rate) identik sebesar 26,83%. Pendekatan multi-korpus ini terbukti signifikan meningkatkan relevansi dan keakuratan jawaban dibandingkan RAG standar.",
+    "after": ""
+  },
+  {
+    "type": "inject_noise",
+    "record_id": "10.21203/rs.3.rs-9882260/v1",
+    "before_length": 0,
+    "after_length": 114
+  },
+  {
+    "type": "inject_noise",
+    "record_id": "10.3390/buildings16132637",
+    "before_length": 2207,
+    "after_length": 2321
+  },
+  {
+    "type": "inject_noise",
+    "record_id": "10.35314/3y9hy151",
+    "before_length": 0,
+    "after_length": 114
+  },
+  {
+    "type": "inject_noise",
+    "record_id": "10.63646/kpqm1958",
+    "before_length": 1635,
+    "after_length": 1749
+  },
+  {
+    "type": "inject_noise",
+    "record_id": "10.3390/app16052244",
+    "before_length": 1575,
+    "after_length": 1689
+  },
+  {
+    "type": "inject_noise",
+    "record_id": "10.36227/techrxiv.177272838.89432844/v1",
+    "before_length": 1309,
+    "after_length": 1423
+  },
+  {
+    "type": "truncate_title",
+    "record_id": "10.70121/001c.158711",
+    "before": "The Role of Retrieval-Augmented Generation in Improving Factual Accuracy for Medical Large Language Models",
+    "after": "The Role o..."
+  },
+  {
+    "type": "truncate_title",
+    "record_id": "10.35314/3y9hy151",
+    "before": "Implementation of Retrieval-Augmented Generation Method on Large Language Model for Development of Campus Service and Information Chatbot",
+    "after": "Implementa..."
+  },
+  {
+    "type": "truncate_title",
+    "record_id": "10.21203/rs.3.rs-9882260/v1",
+    "before": "Operationalizing Reliability Gaps in Large Language Models: A Semi-Systematic Evidence Map of Reasoning, Factuality, Evaluation, and Retrieval-Augmented Generation",
+    "after": "Operationa..."
+  },
+  {
+    "type": "truncate_title",
+    "record_id": "10.55041/isjem07213",
+    "before": "Speculative Retrieval-Augmented Generation for Cost-Efficient Large Language Model Inference",
+    "after": "Speculativ..."
+  },
+  {
+    "type": "truncate_title",
+    "record_id": "10.52060/juptik.v4i1.4318",
+    "before": "Chatbot Hybrid Fatwa MUI Menggunakan Retrieval Augmented Generation dan Large Language Model",
+    "after": "Chatbot Hy..."
+  },
+  {
+    "type": "truncate_title",
+    "record_id": "10.47576/2949-1894.2026.7.7.023",
+    "before": "Снижение рисков применения LLM (Large Language Model) в сфере экономической безопасности предприятий молочной промышленности на основе подхода RAG (Retrieval-Augmented Generation)",
+    "after": "Снижение р..."
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.3390/app16052244",
+    "before": 161,
+    "after": 1161
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.70121/001c.158711",
+    "before": 144,
+    "after": 1144
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.32473/flairs.39.1.141782",
+    "before": 92,
+    "after": 1092
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.21203/rs.3.rs-9770645/v1",
+    "before": 76,
+    "after": 1076
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.21203/rs.3.rs-9882260/v1",
+    "before": 65,
+    "after": 1065
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.35314/3y9hy151",
+    "before": 161,
+    "after": 1161
+  },
+  {
+    "type": "add_duplicates",
+    "params": {
+      "count": 2
+    },
+    "affected_ids": [
+      "10.1007/s10278-026-02086-9",
+      "10.21203/rs.3.rs-10178277/v1"
+    ]
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "samples": 16,
+  "retrieval_hit_rate": 0.5,
+  "mean_token_f1": 0.6337209302325582,
+  "judge_accuracy": 0.6875,
+  "mean_judge_score": 3.875,
+  "ragas": {
+    "skipped": "Set RUN_RAGAS=1 to enable the slower Ragas pass."
+  }
+}
