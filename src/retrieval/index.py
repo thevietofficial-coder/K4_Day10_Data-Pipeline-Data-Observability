@@ -135,7 +135,7 @@ class LocalEmbeddingIndex:
             settings=settings,
             collection_name=payload["collection_name"],
             documents=payload["documents"],
-            persist_path=Path(payload["persist_path"]),
+            persist_path=settings.paths.chroma_dir,
         )
 
     def search(self, query: str, top_k: int | None = None) -> list[SearchResult]:
