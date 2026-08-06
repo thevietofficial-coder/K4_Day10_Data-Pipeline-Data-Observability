@@ -438,3 +438,291 @@ def write_corrupted_checkpoint(
     }
     write_json(Path(output_path), payload)
     return payload
+
+
+def write_recovery_checkpoint(
+    output_path: Path,
+    baseline_metrics: dict[str, Any],
+    corrupted_metrics: dict[str, Any],
+    repaired_metrics: dict[str, Any],
+    baseline_answers: list[dict[str, Any]],
+    corrupted_answers: list[dict[str, Any]],
+    repaired_answers: list[dict[str, Any]],
+    baseline_quality: dict[str, Any],
+    corrupted_quality: dict[str, Any],
+    repaired_quality: dict[str, Any],
+    baseline_freshness: dict[str, Any],
+    corrupted_freshness: dict[str, Any],
+    repaired_freshness: dict[str, Any],
+    repaired_index_audit: dict[str, Any],
+) -> dict[str, Any]:
+    """Persist an auditable baseline/corrupted/repaired comparison."""
+    answer_sets = {
+        "baseline": {answer["id"]: answer for answer in baseline_answers},
+        "corrupted": {answer["id"]: answer for answer in corrupted_answers},
+        "repaired": {answer["id"]: answer for answer in repaired_answers},
+    }
+    sample_ids = set(answer_sets["baseline"])
+    if not sample_ids or any(set(items) != sample_ids for items in answer_sets.values()):
+        raise ValueError("All three answer artifacts must contain the same non-empty sample IDs.")
+
+    metrics_by_state = {
+        "baseline": baseline_metrics,
+        "corrupted": corrupted_metrics,
+        "repaired": repaired_metrics,
+    }
+    for state, answers in answer_sets.items():
+        if int(metrics_by_state[state].get("samples", -1)) != len(answers):
+            raise ValueError(f"{state} sample count does not match its answer artifact.")
+        observed = {
+            "retrieval_hit_rate": sum(
+                bool(answer.get("retrieval_hit")) for answer in answers.values()
+            )
+            / len(answers),
+            "mean_token_f1": sum(
+                float(answer.get("token_f1", 0)) for answer in answers.values()
+            )
+            / len(answers),
+            "judge_accuracy": sum(
+                bool(answer.get("judge", {}).get("correct")) for answer in answers.values()
+            )
+            / len(answers),
+            "mean_judge_score": sum(
+                int(answer.get("judge", {}).get("score", 0)) for answer in answers.values()
+            )
+            / len(answers),
+        }
+        for name, value in observed.items():
+            if abs(float(metrics_by_state[state].get(name, -1)) - value) > 1e-12:
+                raise ValueError(f"{state} {name} does not match its answer artifact.")
+
+    hashes = {
+        state: metrics.get("test_set_audit", {}).get("sha256")
+        for state, metrics in metrics_by_state.items()
+    }
+    if not hashes["baseline"] or len(set(hashes.values())) != 1:
+        raise ValueError("All three evaluations must use the same frozen test set.")
+
+    metric_names = (
+        "retrieval_hit_rate",
+        "mean_token_f1",
+        "judge_accuracy",
+        "mean_judge_score",
+    )
+    metric_comparison: dict[str, dict[str, float]] = {}
+    unrecovered_metrics: list[str] = []
+    for name in metric_names:
+        baseline = float(baseline_metrics[name])
+        corrupted = float(corrupted_metrics[name])
+        repaired = float(repaired_metrics[name])
+        residual = repaired - baseline
+        metric_comparison[name] = {
+            "baseline": baseline,
+            "corrupted": corrupted,
+            "repaired": repaired,
+            "corruption_delta": corrupted - baseline,
+            "repair_delta": repaired - corrupted,
+            "residual_vs_baseline": residual,
+        }
+        if abs(residual) > 1e-12:
+            unrecovered_metrics.append(name)
+
+    fallback_ids: dict[str, list[str]] = {}
+    judge_anomalies: list[dict[str, Any]] = []
+    for state, answers in answer_sets.items():
+        fallback_ids[state] = [
+            sample_id
+            for sample_id, answer in answers.items()
+            if "fallback heuristic"
+            in str(answer.get("judge", {}).get("reasoning", "")).lower()
+        ]
+        for sample_id, answer in answers.items():
+            if not str(answer.get("answer", "")).strip() and bool(
+                answer.get("judge", {}).get("correct")
+            ):
+                judge_anomalies.append(
+                    {
+                        "state": state,
+                        "id": sample_id,
+                        "kind": "empty_answer_marked_correct",
+                        "judge_score": answer.get("judge", {}).get("score"),
+                        "judge_reasoning": answer.get("judge", {}).get("reasoning"),
+                    }
+                )
+
+    cases: list[dict[str, Any]] = []
+    for sample_id in sorted(sample_ids):
+        baseline = answer_sets["baseline"][sample_id]
+        corrupted = answer_sets["corrupted"][sample_id]
+        repaired = answer_sets["repaired"][sample_id]
+        degraded = (
+            bool(baseline.get("retrieval_hit")) and not bool(corrupted.get("retrieval_hit"))
+        ) or float(corrupted.get("token_f1", 0)) < float(baseline.get("token_f1", 0)) or int(
+            corrupted.get("judge", {}).get("score", 0)
+        ) < int(baseline.get("judge", {}).get("score", 0))
+        unresolved = (
+            bool(repaired.get("retrieval_hit")) != bool(baseline.get("retrieval_hit"))
+            or abs(float(repaired.get("token_f1", 0)) - float(baseline.get("token_f1", 0)))
+            > 1e-12
+            or int(repaired.get("judge", {}).get("score", 0))
+            != int(baseline.get("judge", {}).get("score", 0))
+        )
+        cases.append(
+            {
+                "id": sample_id,
+                "question_type": baseline.get("question_type"),
+                "question": baseline.get("question"),
+                "ground_truth": baseline.get("ground_truth"),
+                "ground_truth_doc_ids": baseline.get("ground_truth_doc_ids", []),
+                "degraded_under_corruption": degraded,
+                "recovered_to_baseline": degraded and not unresolved,
+                "unresolved_after_repair": unresolved,
+                "retrieval_hit": {
+                    state: bool(answer_sets[state][sample_id].get("retrieval_hit"))
+                    for state in answer_sets
+                },
+                "token_f1": {
+                    state: float(answer_sets[state][sample_id].get("token_f1", 0))
+                    for state in answer_sets
+                },
+                "judge_score": {
+                    state: int(answer_sets[state][sample_id].get("judge", {}).get("score", 0))
+                    for state in answer_sets
+                },
+                "answers": {
+                    state: answer_sets[state][sample_id].get("answer", "")
+                    for state in answer_sets
+                },
+                "retrieved_doc_ids": {
+                    state: answer_sets[state][sample_id].get("retrieved_doc_ids", [])
+                    for state in answer_sets
+                },
+            }
+        )
+
+    degraded_cases = [case for case in cases if case["degraded_under_corruption"]]
+    recovered_cases = [case for case in cases if case["recovered_to_baseline"]]
+    unresolved_cases = [case for case in cases if case["unresolved_after_repair"]]
+    degraded_cases.sort(
+        key=lambda case: (
+            case["token_f1"]["corrupted"] - case["token_f1"]["baseline"],
+            case["judge_score"]["corrupted"] - case["judge_score"]["baseline"],
+        )
+    )
+    corrupted_misses = [
+        case for case in cases if not case["retrieval_hit"]["corrupted"]
+    ]
+
+    quality_signal_names = (
+        "row_count",
+        "null_paper_id_rows",
+        "null_title_rows",
+        "null_summary_rows",
+        "duplicate_paper_id_rows",
+        "duplicate_record_rows",
+        "short_summary_rows",
+        "stale_rows",
+        "max_age_days",
+    )
+    quality_by_state = {
+        "baseline": baseline_quality.get("signals", {}),
+        "corrupted": corrupted_quality.get("signals", {}),
+        "repaired": repaired_quality.get("signals", {}),
+    }
+    signal_comparison: dict[str, dict[str, Any]] = {}
+    unrecovered_signals: list[str] = []
+    for name in quality_signal_names:
+        values = {state: signals.get(name) for state, signals in quality_by_state.items()}
+        values["corruption_delta"] = (
+            values["corrupted"] - values["baseline"]
+            if isinstance(values["baseline"], (int, float))
+            and isinstance(values["corrupted"], (int, float))
+            else None
+        )
+        values["repair_delta"] = (
+            values["repaired"] - values["corrupted"]
+            if isinstance(values["corrupted"], (int, float))
+            and isinstance(values["repaired"], (int, float))
+            else None
+        )
+        values["residual_vs_baseline"] = (
+            values["repaired"] - values["baseline"]
+            if isinstance(values["baseline"], (int, float))
+            and isinstance(values["repaired"], (int, float))
+            else None
+        )
+        signal_comparison[name] = values
+        if values["repaired"] != values["baseline"]:
+            unrecovered_signals.append(name)
+
+    for name in ("latest_published", "oldest_published", "is_fresh"):
+        values = {
+            "baseline": baseline_freshness.get(name),
+            "corrupted": corrupted_freshness.get(name),
+            "repaired": repaired_freshness.get(name),
+            "corruption_delta": None,
+            "repair_delta": None,
+            "residual_vs_baseline": None,
+        }
+        signal_comparison[name] = values
+        if values["repaired"] != values["baseline"]:
+            unrecovered_signals.append(name)
+
+    repair_complete = bool(
+        not unrecovered_metrics
+        and not unrecovered_signals
+        and not unresolved_cases
+        and repaired_quality.get("status") == "pass"
+        and repaired_freshness.get("is_fresh") is True
+        and repaired_index_audit.get("status") == "pass"
+        and not fallback_ids["repaired"]
+    )
+    payload = {
+        "generated_at": datetime.now(UTC).isoformat(),
+        "checkpoint": "recovery",
+        "same_test_set": True,
+        "test_set_sha256": hashes["baseline"],
+        "samples": len(sample_ids),
+        "metric_comparison": metric_comparison,
+        "signal_comparison": signal_comparison,
+        "quality_status": {
+            "baseline": baseline_quality.get("status"),
+            "corrupted": corrupted_quality.get("status"),
+            "repaired": repaired_quality.get("status"),
+        },
+        "freshness_status": {
+            "baseline": baseline_freshness.get("is_fresh"),
+            "corrupted": corrupted_freshness.get("is_fresh"),
+            "repaired": repaired_freshness.get("is_fresh"),
+        },
+        "repaired_index_audit": repaired_index_audit,
+        "evaluator_integrity": {
+            "fallback_sample_ids": fallback_ids,
+            "silent_fallback_detected": False,
+            "judge_anomalies": judge_anomalies,
+        },
+        "case_summary": {
+            "degraded_under_corruption": len(degraded_cases),
+            "recovered_to_baseline": len(recovered_cases),
+            "unresolved_after_repair": len(unresolved_cases),
+        },
+        "representative_recovery_case": degraded_cases[0] if degraded_cases else None,
+        "representative_repaired_hit": next(
+            (case for case in cases if case["retrieval_hit"]["repaired"]), None
+        ),
+        "representative_miss": corrupted_misses[0] if corrupted_misses else None,
+        "representative_miss_state": "corrupted" if corrupted_misses else None,
+        "unrecovered_metrics": unrecovered_metrics,
+        "unrecovered_signals": unrecovered_signals,
+        "unresolved_cases": unresolved_cases,
+        "recovery_complete": repair_complete,
+        "limitations": [
+            "The fixed test set has 16 questions over 4 papers, so it is not a broad benchmark.",
+            "Questions include an exact paper ID and title, which makes retrieval easier than open-ended RAG.",
+            "Several corruption types were applied together; this run cannot isolate every type's causal effect.",
+            "The structured LLM judge produced an observed false positive for an empty corrupted answer.",
+            "Ragas was skipped, and this single run provides no variance or confidence interval.",
+        ],
+    }
+    write_json(Path(output_path), payload)
+    return payload

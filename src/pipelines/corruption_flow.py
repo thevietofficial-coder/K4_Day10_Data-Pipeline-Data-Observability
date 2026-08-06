@@ -8,8 +8,9 @@ from evaluation.metrics import evaluate_pipeline
 from ingestion.cleaning import build_clean_dataframe
 from ingestion.corruption import corrupt_clean_dataframe
 from ingestion.crossref import load_raw_records
+from observability.audit import audit_embedding_manifest, write_recovery_checkpoint
 from observability.quality import build_freshness_report, run_data_quality_checks
-from observability.reporting import generate_corruption_report
+from observability.reporting import generate_recovery_comparison_report
 from retrieval.index import LocalEmbeddingIndex
 
 
@@ -86,15 +87,31 @@ def main() -> None:
     )
 
     print("== 8/8 Comparison report ==")
-    generate_corruption_report(
-        report_path=settings.paths.comparison_report,
+    repaired_index_audit = audit_embedding_manifest(
+        manifest_path=settings.paths.repaired_embeddings_json,
+        expected_collection_name=settings.repaired_collection_name,
+        expected_doc_ids=repaired_df["paper_id"].astype(str),
+        chroma_dir=settings.paths.chroma_dir,
+    )
+    recovery_checkpoint = write_recovery_checkpoint(
+        output_path=settings.paths.quality_dir / "recovery_checkpoint.json",
         baseline_metrics=baseline_metrics,
         corrupted_metrics=corrupted_bundle.summary,
         repaired_metrics=repaired_bundle.summary,
+        baseline_answers=read_json(settings.paths.baseline_answers),
+        corrupted_answers=read_json(settings.paths.corrupted_answers),
+        repaired_answers=read_json(settings.paths.repaired_answers),
+        baseline_quality=read_json(settings.paths.quality_dir / "baseline.json"),
         corrupted_quality=corrupted_quality,
         repaired_quality=repaired_quality,
+        baseline_freshness=read_json(settings.paths.freshness_report),
         corrupted_freshness=corrupted_freshness,
         repaired_freshness=repaired_freshness,
+        repaired_index_audit=repaired_index_audit,
+    )
+    generate_recovery_comparison_report(
+        report_path=settings.paths.comparison_report,
+        checkpoint=recovery_checkpoint,
     )
     print(f"  report -> {settings.paths.comparison_report}")
 
