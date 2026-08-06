@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import hashlib
+import json
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
-from core.utils import first_sentence, normalize_whitespace, write_json
+from core.utils import first_sentence, normalize_whitespace, read_json, write_json
 
 
 _REQUIRED_COLUMNS = {
@@ -19,6 +21,14 @@ _REQUIRED_COLUMNS = {
     "text_for_embedding",
 }
 _MINIMUM_DOCUMENTS = 4
+_QUESTION_TYPES = {"summary", "authors", "date", "categories"}
+_TEST_SET_FIELDS = {
+    "id",
+    "question_type",
+    "question",
+    "ground_truth",
+    "ground_truth_doc_ids",
+}
 
 
 def _blank_mask(series: pd.Series) -> pd.Series:
@@ -50,6 +60,115 @@ def _assert_stable_paper_ids(df: pd.DataFrame) -> None:
             "paper_id is not stable: duplicate cleaned IDs found: "
             + ", ".join(duplicate_ids[:10])
         )
+
+
+def audit_test_set(
+    test_set: list[dict[str, Any]],
+    available_doc_ids: list[str] | set[str] | None = None,
+    preview_rows: int = 3,
+    require_index_coverage: bool = True,
+) -> dict[str, Any]:
+    """Validate test-set schema and optionally prove index document coverage."""
+    if not isinstance(test_set, list) or not test_set:
+        raise ValueError("The evaluation test set must be a non-empty JSON list.")
+
+    sample_ids: list[str] = []
+    ground_truth_ids: set[str] = set()
+    question_types: set[str] = set()
+    for position, sample in enumerate(test_set):
+        if not isinstance(sample, dict):
+            raise ValueError(f"Test-set item {position} must be a JSON object.")
+        missing_fields = sorted(_TEST_SET_FIELDS.difference(sample))
+        if missing_fields:
+            raise ValueError(
+                f"Test-set item {position} is missing fields: {', '.join(missing_fields)}"
+            )
+
+        for field in ("id", "question_type", "question", "ground_truth"):
+            value = sample[field]
+            if not isinstance(value, str) or not normalize_whitespace(value):
+                raise ValueError(f"Test-set item {position} has invalid {field!r}.")
+        if sample["question_type"] not in _QUESTION_TYPES:
+            raise ValueError(
+                f"Test-set item {position} has unsupported question_type "
+                f"{sample['question_type']!r}."
+            )
+
+        doc_ids = sample["ground_truth_doc_ids"]
+        if not isinstance(doc_ids, list) or not doc_ids:
+            raise ValueError(
+                f"Test-set item {position} must have at least one ground_truth_doc_id."
+            )
+        if any(not isinstance(doc_id, str) or not doc_id.strip() for doc_id in doc_ids):
+            raise ValueError(f"Test-set item {position} contains an invalid ground_truth_doc_id.")
+
+        sample_ids.append(sample["id"])
+        question_types.add(sample["question_type"])
+        ground_truth_ids.update(doc_ids)
+
+    duplicate_sample_ids = sorted(
+        {sample_id for sample_id in sample_ids if sample_ids.count(sample_id) > 1}
+    )
+    if duplicate_sample_ids:
+        raise ValueError(f"Duplicate test-set IDs found: {', '.join(duplicate_sample_ids)}")
+
+    missing_from_index: list[str] = []
+    index_document_count: int | None = None
+    if available_doc_ids is not None:
+        index_ids = {str(doc_id) for doc_id in available_doc_ids}
+        index_document_count = len(index_ids)
+        missing_from_index = sorted(ground_truth_ids.difference(index_ids))
+        if missing_from_index and require_index_coverage:
+            raise ValueError(
+                "Ground-truth document IDs are missing from the index: "
+                + ", ".join(missing_from_index)
+            )
+
+    canonical = json.dumps(
+        test_set,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    preview = [
+        {
+            "id": item["id"],
+            "question_type": item["question_type"],
+            "question": item["question"],
+            "ground_truth": item["ground_truth"],
+            "ground_truth_doc_ids": item["ground_truth_doc_ids"],
+        }
+        for item in test_set[: max(0, preview_rows)]
+    ]
+    return {
+        "status": "pass" if not missing_from_index else "warning",
+        "samples": len(test_set),
+        "question_types": sorted(question_types),
+        "unique_ground_truth_doc_ids": len(ground_truth_ids),
+        "ground_truth_doc_ids": sorted(ground_truth_ids),
+        "index_document_count": index_document_count,
+        "missing_ground_truth_doc_ids": missing_from_index,
+        "all_ground_truth_ids_in_index": available_doc_ids is not None and not missing_from_index,
+        "index_coverage_required": require_index_coverage,
+        "sha256": hashlib.sha256(canonical).hexdigest(),
+        "preview": preview,
+    }
+
+
+def load_frozen_test_set(
+    path: Path,
+    available_doc_ids: list[str] | set[str] | None = None,
+    require_index_coverage: bool = True,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Read the persisted test set and validate it before evaluation."""
+    test_set = read_json(Path(path))
+    audit = audit_test_set(
+        test_set,
+        available_doc_ids=available_doc_ids,
+        require_index_coverage=require_index_coverage,
+    )
+    audit["path"] = str(Path(path))
+    return test_set, audit
 
 
 def build_test_set(df: pd.DataFrame, output_path) -> list[dict[str, Any]]:
@@ -130,5 +249,14 @@ def build_test_set(df: pd.DataFrame, output_path) -> list[dict[str, Any]]:
                 }
             )
 
-    write_json(Path(output_path), test_set)
-    return test_set
+    clean_doc_ids = set(df["paper_id"].astype(str))
+    audit_test_set(test_set, available_doc_ids=clean_doc_ids)
+    output_path = Path(output_path)
+    write_json(output_path, test_set)
+
+    # The file on disk is the frozen evaluation contract. Read it back before
+    # returning so serialization or partial-write issues cannot reach metrics.
+    frozen_test_set, _ = load_frozen_test_set(output_path, available_doc_ids=clean_doc_ids)
+    if frozen_test_set != test_set:
+        raise RuntimeError(f"Frozen test set did not round-trip cleanly: {output_path}")
+    return frozen_test_set

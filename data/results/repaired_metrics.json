@@ -4,6 +4,29 @@
   "mean_token_f1": 1.0,
   "judge_accuracy": 1.0,
   "mean_judge_score": 5,
+  "test_set_audit": {
+    "status": "pass",
+    "samples": 16,
+    "question_types": [
+      "authors",
+      "categories",
+      "date",
+      "summary"
+    ],
+    "unique_ground_truth_doc_ids": 4,
+    "ground_truth_doc_ids": [
+      "10.1007/s10278-026-02086-9",
+      "10.1111/exsy.70341",
+      "10.2118/234689-pa",
+      "10.21203/rs.3.rs-10178277/v1"
+    ],
+    "index_document_count": 24,
+    "missing_ground_truth_doc_ids": [],
+    "all_ground_truth_ids_in_index": true,
+    "index_coverage_required": true,
+    "sha256": "88846fd8575b8fe78cd02cc8e3647a06833666568a430c04d030acac8d13ba00",
+    "path": "C:\\Users\\ADMIN\\.vscode\\VinAI_LAB\\K4_Day10_Data-Pipeline-Data-Observability\\data\\eval\\test_set.json"
+  },
   "ragas": {
     "skipped": "Set RUN_RAGAS=1 to enable the slower Ragas pass."
   }

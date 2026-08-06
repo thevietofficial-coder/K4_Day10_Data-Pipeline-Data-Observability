@@ -72,14 +72,21 @@ def _delta_display(delta: float | None) -> str:
     return "N/A" if delta is None else f"{delta:+.4f}"
 
 
+def _preview(value: Any, limit: int = 180) -> str:
+    rendered = _display(value)
+    return rendered if len(rendered) <= limit else rendered[: limit - 1] + "…"
+
+
 def generate_phase1_report(
     report_path,
     source_summary: dict[str, Any],
     metrics: dict[str, Any],
     quality: dict[str, Any],
     freshness: dict[str, Any],
+    index_audit: dict[str, Any] | None = None,
+    test_set_audit: dict[str, Any] | None = None,
 ) -> None:
-    """Write a baseline report whose values come only from pipeline artifacts."""
+    """Write a CP3-ready baseline report using only supplied artifact values."""
     source_rows = [f"| `{key}` | {_display(value)} |" for key, value in sorted(source_summary.items())]
     if not source_rows:
         source_rows = ["| N/A | No source summary supplied |"]
@@ -93,6 +100,62 @@ def generate_phase1_report(
         "| Quality and freshness evidence | `data/quality/` |",
         "| This baseline report | `data/reports/phase1_report.md` |",
     ]
+    if index_audit is None:
+        index_audit_lines = [
+            "Index audit was not supplied. CP3 must pass the embedding manifest audit payload; no value is inferred.",
+        ]
+    else:
+        index_audit_lines = [
+            "| Signal | Value |",
+            "| --- | --- |",
+            f"| Status | {_display(index_audit.get('status'))} |",
+            f"| Backend/model | {_display(index_audit.get('backend'))} / {_display(index_audit.get('embedding_model'))} |",
+            f"| Collection | {_display(index_audit.get('collection_name'))} |",
+            f"| Expected collection | {_display(index_audit.get('expected_collection_name'))} |",
+            f"| Manifest documents | {_display(index_audit.get('manifest_document_count'))} |",
+            f"| Chroma documents | {_display(index_audit.get('collection_document_count'))} |",
+            f"| Duplicate document IDs | {_display(index_audit.get('duplicate_document_ids'))} |",
+            f"| Missing clean IDs | {_display(index_audit.get('missing_expected_doc_ids'))} |",
+            f"| Warnings | {_display(index_audit.get('warnings'))} |",
+        ]
+
+    if test_set_audit is None:
+        test_set_audit_lines = [
+            "Test-set audit was not supplied. CP3 must load and validate the frozen JSON before evaluation.",
+        ]
+        test_set_preview_lines: list[str] = []
+    else:
+        test_set_audit_lines = [
+            "| Signal | Value |",
+            "| --- | --- |",
+            f"| Status | {_display(test_set_audit.get('status'))} |",
+            f"| Frozen path | {_display(test_set_audit.get('path'))} |",
+            f"| SHA-256 | `{_display(test_set_audit.get('sha256'))}` |",
+            f"| Samples | {_display(test_set_audit.get('samples'))} |",
+            f"| Question types | {_display(test_set_audit.get('question_types'))} |",
+            f"| Ground-truth documents | {_display(test_set_audit.get('unique_ground_truth_doc_ids'))} |",
+            f"| All IDs present in index | {_display(test_set_audit.get('all_ground_truth_ids_in_index'))} |",
+        ]
+        preview_rows = test_set_audit.get("preview", [])
+        test_set_preview_lines = [
+            "",
+            "### Persisted-row preview",
+            "",
+            "| ID | Type | Question | Ground truth | Document IDs |",
+            "| --- | --- | --- | --- | --- |",
+            *[
+                "| `{}` | {} | {} | {} | {} |".format(
+                    _display(item.get("id")),
+                    _display(item.get("question_type")),
+                    _preview(item.get("question")),
+                    _preview(item.get("ground_truth")),
+                    _display(item.get("ground_truth_doc_ids")),
+                )
+                for item in preview_rows
+            ],
+        ]
+
+    quality_signals = quality.get("signals", {})
     lines = [
         "# Phase 1 — Baseline Data and RAG Report",
         "",
@@ -110,13 +173,27 @@ def generate_phase1_report(
         "| --- | --- |",
         *artifact_rows,
         "",
+        "## Embedding manifest and collection audit",
+        "",
+        *index_audit_lines,
+        "",
+        "## Frozen evaluation-set audit",
+        "",
+        *test_set_audit_lines,
+        *test_set_preview_lines,
+        "",
         "## RAG evaluation",
         "",
         "| Metric | Value |",
         "| --- | ---: |",
         *_metric_rows(metrics),
         "",
-        "`retrieval_hit_rate` checks whether a retrieved document ID occurs in the sample's clean `ground_truth_doc_ids`; answer metrics compare the returned answer with ground truth derived from that same clean row.",
+        "### Metric definitions",
+        "",
+        "- `retrieval_hit_rate`: mean of the per-question retrieval hit flag. A hit means at least one retrieved `paper_id` occurs in that question's clean `ground_truth_doc_ids`.",
+        "- `mean_token_f1`: mean harmonic score of token precision and recall after whitespace normalization and lower-casing. The current implementation uses unique token sets, so it measures lexical overlap rather than semantic equivalence or token order.",
+        "- `judge_accuracy`: fraction of answers that the structured LLM judge marks `correct=true`; if the provider is unavailable, the evaluator records a token-F1-based fallback reason in each answer.",
+        "- `mean_judge_score`: mean structured judge score on the 1–5 scale.",
         "",
         "## Data quality",
         "",
@@ -125,6 +202,21 @@ def generate_phase1_report(
         "| Check | Dimension | Result | Observed | Expected |",
         "| --- | --- | --- | ---: | --- |",
         *_quality_rows(quality),
+        "",
+        "### Baseline comparison signals",
+        "",
+        "These values are the control signals to compare with corrupted and repaired runs.",
+        "",
+        "| Signal | Baseline |",
+        "| --- | ---: |",
+        f"| Row count | {_display(quality_signals.get('row_count'))} |",
+        f"| Null paper IDs | {_display(quality_signals.get('null_paper_id_rows'))} |",
+        f"| Null titles | {_display(quality_signals.get('null_title_rows'))} |",
+        f"| Null summaries | {_display(quality_signals.get('null_summary_rows'))} |",
+        f"| Duplicate paper-ID rows | {_display(quality_signals.get('duplicate_paper_id_rows'))} |",
+        f"| Duplicate records | {_display(quality_signals.get('duplicate_record_rows'))} |",
+        f"| Stale rows | {_display(freshness.get('stale_rows'))} |",
+        f"| Maximum age (days) | {_display(freshness.get('max_age_days'))} |",
         "",
         "## Freshness",
         "",
@@ -143,6 +235,106 @@ def generate_phase1_report(
         "## Baseline interpretation",
         "",
         "This report establishes the clean-data control. The same frozen evaluation set must be reused for corrupted and repaired indexes; otherwise metric changes cannot be attributed to the data state.",
+        "",
+    ]
+    write_text(Path(report_path), "\n".join(lines))
+
+
+def generate_corrupted_evidence_report(
+    report_path,
+    checkpoint: dict[str, Any],
+) -> None:
+    """Render CP5 evidence without attributing unsupported metric changes."""
+    metric_rows = []
+    for name, baseline in checkpoint.get("baseline_metrics", {}).items():
+        corrupted = checkpoint.get("corrupted_metrics", {}).get(name)
+        delta = checkpoint.get("metric_deltas", {}).get(name)
+        metric_rows.append(
+            f"| `{name}` | {_display(baseline)} | {_display(corrupted)} | {_delta_display(delta)} |"
+        )
+
+    event_rows = [
+        f"| `{name}` | {_display(values.get('events'))} | {_display(values.get('affected_references'))} |"
+        for name, values in sorted(checkpoint.get("corruption_events", {}).items())
+    ]
+    signal_rows = [
+        "| `{}` | {} | {} | {} | {} |".format(
+            name,
+            _display(values.get("baseline")),
+            _display(values.get("corrupted")),
+            _delta_display(values.get("delta")),
+            "changed" if values.get("changed") else "unchanged",
+        )
+        for name, values in checkpoint.get("signal_comparison", {}).items()
+    ]
+
+    worse_cases = checkpoint.get("worse_cases", [])
+    if worse_cases:
+        case = worse_cases[0]
+        case_lines = [
+            f"- Sample: `{_display(case.get('id'))}` ({_display(case.get('question_type'))})",
+            f"- Ground-truth document IDs: {_display(case.get('ground_truth_doc_ids'))}",
+            f"- Retrieval hit: {_display(case.get('baseline_retrieval_hit'))} → {_display(case.get('corrupted_retrieval_hit'))}",
+            f"- Token F1: {_display(case.get('baseline_token_f1'))} → {_display(case.get('corrupted_token_f1'))}",
+            f"- Judge score: {_display(case.get('baseline_judge_score'))} → {_display(case.get('corrupted_judge_score'))}",
+            f"- Corrupted answer: {_display(case.get('corrupted_answer'))}",
+            f"- Retrieved IDs: {_display(case.get('corrupted_retrieved_doc_ids'))}",
+            f"- Judge reasoning: {_display(case.get('judge_reasoning'))}",
+        ]
+    else:
+        case_lines = ["No per-question degradation was measured."]
+
+    integrity = checkpoint.get("evaluator_integrity", {})
+    supported_links = checkpoint.get("supported_links", [])
+    unsupported_types = checkpoint.get("corruption_types_without_direct_metric_attribution", [])
+    unchanged_signals = checkpoint.get("unchanged_signals", [])
+    silent_fallback = "yes" if integrity.get("silent_fallback_detected") else "no"
+    lines = [
+        "# CP5 — Corrupted Data Evidence Report",
+        "",
+        f"Frozen test-set SHA-256: `{_display(checkpoint.get('test_set_sha256'))}`",
+        "",
+        "## Metric comparison",
+        "",
+        "| Metric | Baseline | Corrupted | Delta |",
+        "| --- | ---: | ---: | ---: |",
+        *metric_rows,
+        "",
+        "## Evaluator integrity",
+        "",
+        f"- Judge mode: `{_display(integrity.get('judge_mode'))}`",
+        f"- Recorded fallback judges: {_display(integrity.get('fallback_judges'))}",
+        f"- Silent fallback detected: {silent_fallback}",
+        "",
+        "A fallback is never counted silently: fallback reasoning is stored per answer and counted in the checkpoint.",
+        "",
+        "## Corruption log summary",
+        "",
+        "| Type | Log events | Affected references |",
+        "| --- | ---: | ---: |",
+        *event_rows,
+        "",
+        "## Quality and freshness signals",
+        "",
+        "| Signal | Baseline | Corrupted | Delta | State |",
+        "| --- | ---: | ---: | ---: | --- |",
+        *signal_rows,
+        "",
+        "## One measured worse case",
+        "",
+        *case_lines,
+        "",
+        "## Supported evidence links",
+        "",
+        *([f"- {item}." for item in supported_links] or ["- No supported link was measured."]),
+        "",
+        "## Guard against over-claiming",
+        "",
+        f"Unchanged signals: {_display(unchanged_signals)}.",
+        "",
+        f"Corruption types without direct per-question metric attribution: {_display(unsupported_types)}.",
+        "",
+        "These types may have changed data-quality signals, but this run does not isolate their individual causal contribution to an answer metric.",
         "",
     ]
     write_text(Path(report_path), "\n".join(lines))
@@ -255,6 +447,152 @@ def generate_corruption_report(
         f"2. Repair from raw data → quality status **{_quality_state(repaired_quality)}**, stale rows {_display(repaired_freshness.get('stale_rows'))} → {recovered_text}.",
         "",
         "If the report says that no metric moved, the artifacts do not support a degradation/recovery claim; inspect per-question answers and corruption coverage instead of asserting impact without evidence.",
+        "",
+    ]
+    write_text(Path(report_path), "\n".join(lines))
+
+
+def generate_recovery_comparison_report(
+    report_path: Path,
+    checkpoint: dict[str, Any],
+) -> None:
+    """Render the CP6 report from one validated three-state checkpoint."""
+    metric_rows = [
+        "| `{}` | {} | {} | {} | {} | {} | {} |".format(
+            name,
+            _display(values.get("baseline")),
+            _display(values.get("corrupted")),
+            _display(values.get("repaired")),
+            _delta_display(values.get("corruption_delta")),
+            _delta_display(values.get("repair_delta")),
+            _delta_display(values.get("residual_vs_baseline")),
+        )
+        for name, values in checkpoint.get("metric_comparison", {}).items()
+    ]
+    signal_rows = [
+        "| `{}` | {} | {} | {} | {} | {} | {} |".format(
+            name,
+            _display(values.get("baseline")),
+            _display(values.get("corrupted")),
+            _display(values.get("repaired")),
+            _delta_display(values.get("corruption_delta")),
+            _delta_display(values.get("repair_delta")),
+            _delta_display(values.get("residual_vs_baseline")),
+        )
+        for name, values in checkpoint.get("signal_comparison", {}).items()
+    ]
+
+    case = checkpoint.get("representative_recovery_case") or {}
+    miss_state = checkpoint.get("representative_miss_state")
+    miss = checkpoint.get("representative_miss") or {}
+    hit = checkpoint.get("representative_repaired_hit") or {}
+    integrity = checkpoint.get("evaluator_integrity", {})
+    repaired_index = checkpoint.get("repaired_index_audit", {})
+    anomalies = integrity.get("judge_anomalies", [])
+    anomaly_lines = [
+        "- `{}` in `{}`: `{}`; judge score {}. This is a measured judge false positive.".format(
+            item.get("id"),
+            item.get("state"),
+            item.get("kind"),
+            _display(item.get("judge_score")),
+        )
+        for item in anomalies
+    ]
+
+    if checkpoint.get("recovery_complete"):
+        recovery_statement = (
+            "Within the measured scope, recovery is complete: repaired metrics and monitored "
+            "signals equal baseline, repaired quality/freshness/index audits pass, and no "
+            "repaired sample uses a recorded judge fallback."
+        )
+    else:
+        recovery_statement = (
+            "Recovery is not complete. Unrecovered metrics: {}. Unrecovered signals: {}. "
+            "Unresolved answer cases: {}."
+        ).format(
+            _display(checkpoint.get("unrecovered_metrics", [])),
+            _display(checkpoint.get("unrecovered_signals", [])),
+            len(checkpoint.get("unresolved_cases", [])),
+        )
+
+    lines = [
+        "# CP6 - Baseline, Corrupted, and Repaired Comparison",
+        "",
+        f"Frozen test-set SHA-256: `{_display(checkpoint.get('test_set_sha256'))}`",
+        f"Samples: {_display(checkpoint.get('samples'))}",
+        "",
+        "All values below are rendered from the validated metrics, answers, quality, freshness, manifest, and collection artifacts. Delta corruption = corrupted - baseline; delta repair = repaired - corrupted; residual = repaired - baseline.",
+        "",
+        "## RAG metrics",
+        "",
+        "| Metric | Baseline | Corrupted | Repaired | Delta corruption | Delta repair | Residual |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        *metric_rows,
+        "",
+        "## Quality and freshness signals",
+        "",
+        "| Signal | Baseline | Corrupted | Repaired | Delta corruption | Delta repair | Residual |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        *signal_rows,
+        "",
+        "Quality status: baseline `{}`, corrupted `{}`, repaired `{}`.".format(
+            checkpoint.get("quality_status", {}).get("baseline"),
+            checkpoint.get("quality_status", {}).get("corrupted"),
+            checkpoint.get("quality_status", {}).get("repaired"),
+        ),
+        "Freshness status: baseline `{}`, corrupted `{}`, repaired `{}`.".format(
+            checkpoint.get("freshness_status", {}).get("baseline"),
+            checkpoint.get("freshness_status", {}).get("corrupted"),
+            checkpoint.get("freshness_status", {}).get("repaired"),
+        ),
+        "",
+        "Freshness uses the cleaned `published` field sourced from Crossref and the materialized `age_days`; it does not invent a publication date from the current clock.",
+        "",
+        "## Recovery evidence from actual answers",
+        "",
+        f"Cases degraded under corruption: {_display(checkpoint.get('case_summary', {}).get('degraded_under_corruption'))}; recovered to baseline: {_display(checkpoint.get('case_summary', {}).get('recovered_to_baseline'))}; unresolved after repair: {_display(checkpoint.get('case_summary', {}).get('unresolved_after_repair'))}.",
+        "",
+        f"Representative sample: `{_display(case.get('id'))}` ({_display(case.get('question_type'))})",
+        "",
+        f"- Ground-truth document ID: {_display(case.get('ground_truth_doc_ids'))}",
+        f"- Retrieval hit (baseline/corrupted/repaired): {_display(case.get('retrieval_hit'))}",
+        f"- Token F1 (baseline/corrupted/repaired): {_display(case.get('token_f1'))}",
+        f"- Judge score (baseline/corrupted/repaired): {_display(case.get('judge_score'))}",
+        f"- Baseline answer: {_display(case.get('answers', {}).get('baseline'))}",
+        f"- Corrupted answer: {_display(case.get('answers', {}).get('corrupted'))}",
+        f"- Repaired answer: {_display(case.get('answers', {}).get('repaired'))}",
+        "",
+        "## Honest demo hit and miss",
+        "",
+        f"- Repaired hit: `{_display(hit.get('id'))}` retrieved its ground-truth ID {_display(hit.get('ground_truth_doc_ids'))}; token F1 {_display(hit.get('token_f1', {}).get('repaired'))}.",
+        f"- {str(miss_state).capitalize()} miss: `{_display(miss.get('id'))}` did not retrieve {_display(miss.get('ground_truth_doc_ids'))}; token F1 {_display(miss.get('token_f1', {}).get(str(miss_state)))}.",
+        "- There is no repaired-state miss in this run; labeling a corrupted miss as repaired would misrepresent the evidence.",
+        "",
+        "## Recovery conclusion",
+        "",
+        recovery_statement,
+        "",
+        "This statement is limited to the monitored fields and the frozen test set; it is not a claim that the RAG system is generally perfect.",
+        "",
+        "## Evaluator integrity and limitations",
+        "",
+        f"Recorded fallback sample IDs: {_display(integrity.get('fallback_sample_ids', {}))}.",
+        f"Repaired index audit: {_display(repaired_index.get('status'))}; collection `{_display(repaired_index.get('collection_name'))}`; documents {_display(repaired_index.get('collection_document_count'))}.",
+        f"Repaired index audit warnings: {_display(repaired_index.get('warnings', []))}.",
+        "",
+        *(anomaly_lines or ["- No judge anomaly was detected by the configured checks."]),
+        "",
+        *[f"- {item}" for item in checkpoint.get("limitations", [])],
+        "",
+        "The false-positive judge example is why retrieval hit and deterministic token F1 are reported beside LLM-judge metrics instead of treating judge score as ground truth.",
+        "",
+        "## Artifact lineage",
+        "",
+        "- Fixed questions: `data/eval/test_set.json`",
+        "- Per-state answers/metrics: `data/results/{baseline,corrupted,repaired}_{answers,metrics}.json`",
+        "- Per-state quality/freshness: `data/quality/`",
+        "- Repaired manifest: `data/embeddings/papers_embeddings_repaired.json`",
+        "- Machine-readable comparison: `data/quality/recovery_checkpoint.json`",
         "",
     ]
     write_text(Path(report_path), "\n".join(lines))

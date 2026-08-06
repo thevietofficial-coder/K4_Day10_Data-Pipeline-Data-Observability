@@ -24,18 +24,57 @@ All values below are rendered from the source, evaluation, quality, and freshnes
 | Quality and freshness evidence | `data/quality/` |
 | This baseline report | `data/reports/phase1_report.md` |
 
+## Embedding manifest and collection audit
+
+| Signal | Value |
+| --- | --- |
+| Status | pass |
+| Backend/model | chroma / sentence-transformers/all-MiniLM-L6-v2 |
+| Collection | papers-baseline |
+| Expected collection | papers-baseline |
+| Manifest documents | 24 |
+| Chroma documents | 24 |
+| Duplicate document IDs | 0 |
+| Missing clean IDs | [] |
+| Warnings | ["manifest persist_path differs from the runtime Chroma path; the runtime path was used for collection audit"] |
+
+## Frozen evaluation-set audit
+
+| Signal | Value |
+| --- | --- |
+| Status | pass |
+| Frozen path | C:\Users\ADMIN\.vscode\VinAI_LAB\K4_Day10_Data-Pipeline-Data-Observability\data\eval\test_set.json |
+| SHA-256 | `88846fd8575b8fe78cd02cc8e3647a06833666568a430c04d030acac8d13ba00` |
+| Samples | 16 |
+| Question types | ["authors", "categories", "date", "summary"] |
+| Ground-truth documents | 4 |
+| All IDs present in index | PASS |
+
+### Persisted-row preview
+
+| ID | Type | Question | Ground truth | Document IDs |
+| --- | --- | --- | --- | --- |
+| `q01-summary` | summary | What is the main point summarized for paper '10.1111/exsy.70341' titled "Hi‐ <scp>RAG</scp> : A Hierarchical Retrieval‐Augmented Generation Framework for Scalable and Generalisabl… | ABSTRACT As tool repositories for Large Language Model (LLM) agents grow from dozens to hundreds of endpoints, flat retrieval paradigms that treat the repository as an unstructure… | ["10.1111/exsy.70341"] |
+| `q01-authors` | authors | Who authored paper '10.1111/exsy.70341' titled "Hi‐ <scp>RAG</scp> : A Hierarchical Retrieval‐Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large… | Wei Tian, Yuhao Zhou | ["10.1111/exsy.70341"] |
+| `q01-date` | date | When was paper '10.1111/exsy.70341' titled "Hi‐ <scp>RAG</scp> : A Hierarchical Retrieval‐Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Lan… | 2026-08-01 | ["10.1111/exsy.70341"] |
+
 ## RAG evaluation
 
 | Metric | Value |
 | --- | ---: |
-| `samples` | 12 |
+| `samples` | 16 |
 | `retrieval_hit_rate` | 1.0000 |
 | `mean_token_f1` | 1.0000 |
 | `judge_accuracy` | 1.0000 |
 | `mean_judge_score` | 5 |
 | `ragas` | {"skipped": "Set RUN_RAGAS=1 to enable the slower Ragas pass."} |
 
-`retrieval_hit_rate` checks whether a retrieved document ID occurs in the sample's clean `ground_truth_doc_ids`; answer metrics compare the returned answer with ground truth derived from that same clean row.
+### Metric definitions
+
+- `retrieval_hit_rate`: mean of the per-question retrieval hit flag. A hit means at least one retrieved `paper_id` occurs in that question's clean `ground_truth_doc_ids`.
+- `mean_token_f1`: mean harmonic score of token precision and recall after whitespace normalization and lower-casing. The current implementation uses unique token sets, so it measures lexical overlap rather than semantic equivalence or token order.
+- `judge_accuracy`: fraction of answers that the structured LLM judge marks `correct=true`; if the provider is unavailable, the evaluator records a token-F1-based fallback reason in each answer.
+- `mean_judge_score`: mean structured judge score on the 1–5 scale.
 
 ## Data quality
 
@@ -54,12 +93,27 @@ Overall status: **PASS** ({"failed": 0, "passed": 10, "total": 10})
 | `age_days_valid` | validity | PASS | 0 | 0 negative ages |
 | `age_days_fresh` | freshness | PASS | 0 | 0 rows older than 180 days |
 
+### Baseline comparison signals
+
+These values are the control signals to compare with corrupted and repaired runs.
+
+| Signal | Baseline |
+| --- | ---: |
+| Row count | 24 |
+| Null paper IDs | 0 |
+| Null titles | 0 |
+| Null summaries | 0 |
+| Duplicate paper-ID rows | 0 |
+| Duplicate records | 0 |
+| Stale rows | 0 |
+| Maximum age (days) | 175 |
+
 ## Freshness
 
 | Signal | Value |
 | --- | --- |
 | Timestamp source | cleaned published field sourced from Crossref |
-| Observation time | 2026-08-06T09:58:44.328457+00:00 |
+| Observation time | 2026-08-06T09:37:18.836400+00:00 |
 | Threshold (days) | 180 |
 | Latest publication | 2026-08-01 |
 | Oldest publication | 2026-02-12 |

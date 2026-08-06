@@ -30,7 +30,10 @@ def build_agent(settings: Settings, index: LocalEmbeddingIndex):
         """Look up a paper by exact paper_id or exact title from the local corpus."""
         record = index.lookup(paper_id_or_title)
         if not record:
-            return "No exact paper match found."
+            return (
+                "No exact paper match found for that paper_id/title. "
+                "Try semantic_search_papers instead before concluding the corpus lacks an answer."
+            )
         return (
             f"paper_id: {record['paper_id']}\n"
             f"title: {record['title']}\n"
@@ -44,6 +47,9 @@ def build_agent(settings: Settings, index: LocalEmbeddingIndex):
         system_prompt=(
             "You answer questions about the indexed scholarly paper corpus sourced from Crossref. "
             "Use tools before answering factual questions. "
+            "Prefer lookup_paper when the user gives an exact paper_id or exact title. "
+            "If lookup_paper finds no exact match, always call semantic_search_papers before answering "
+            "so a paraphrased or partial title still resolves to the right paper. "
             "If the indexed corpus does not support the answer, say so clearly."
         ),
         name="paper_corpus_agent",

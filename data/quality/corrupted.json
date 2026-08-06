@@ -1,6 +1,6 @@
 {
   "report_name": "corrupted",
-  "generated_at": "2026-08-06T09:59:26.785515+00:00",
+  "generated_at": "2026-08-06T10:04:19.799879+00:00",
   "passed": false,
   "success": false,
   "status": "fail",
@@ -23,15 +23,15 @@
     "requested_max_results": 24,
     "null_paper_id_rows": 0,
     "null_title_rows": 0,
-    "null_summary_rows": 6,
+    "null_summary_rows": 4,
     "duplicate_paper_id_rows": 4,
     "duplicate_extra_rows": 2,
     "duplicate_record_rows": 4,
     "duplicate_record_extra_rows": 2,
-    "short_summary_rows": 6,
+    "short_summary_rows": 4,
     "null_age_days_rows": 0,
     "invalid_age_days_rows": 0,
-    "stale_rows": 7,
+    "stale_rows": 6,
     "max_age_days": 1161,
     "freshness_threshold_days": 180,
     "age_days_source": "clean age_days derived from Crossref published timestamp"
@@ -76,14 +76,14 @@
       "name": "summary_not_null",
       "dimension": "completeness",
       "passed": false,
-      "observed": 6,
+      "observed": 4,
       "expected": "0 missing rows"
     },
     {
       "name": "summary_min_length",
       "dimension": "validity",
       "passed": false,
-      "observed": 6,
+      "observed": 4,
       "expected": "0 rows shorter than 80 characters"
     },
     {
@@ -104,7 +104,7 @@
       "name": "age_days_fresh",
       "dimension": "freshness",
       "passed": false,
-      "observed": 7,
+      "observed": 6,
       "expected": "0 rows older than 180 days"
     }
   ]

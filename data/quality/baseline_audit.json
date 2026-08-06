@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-08-06T09:37:18.856545+00:00",
+  "status": "pass",
+  "clean_document_count": 24,
+  "index": {
+    "status": "pass",
+    "manifest_path": "C:\\Users\\ADMIN\\.vscode\\VinAI_LAB\\K4_Day10_Data-Pipeline-Data-Observability\\data\\embeddings\\papers_embeddings.json",
+    "backend": "chroma",
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "collection_name": "papers-baseline",
+    "expected_collection_name": "papers-baseline",
+    "collection_name_matches": true,
+    "manifest_document_count": 24,
+    "expected_document_count": 24,
+    "manifest_ids_match_expected": true,
+    "collection_document_count": 24,
+    "unique_manifest_document_ids": 24,
+    "blank_document_ids": 0,
+    "duplicate_document_ids": 0,
+    "missing_expected_doc_ids": [],
+    "unexpected_doc_ids": [],
+    "recorded_persist_path": "C:\\CODE\\AITHUCCHIEN\\1. LABS\\K4_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
+    "runtime_persist_path": "C:\\Users\\ADMIN\\.vscode\\VinAI_LAB\\K4_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
+    "collection_error": null,
+    "errors": [],
+    "warnings": [
+      "manifest persist_path differs from the runtime Chroma path; the runtime path was used for collection audit"
+    ]
+  },
+  "test_set": {
+    "status": "pass",
+    "samples": 16,
+    "question_types": [
+      "authors",
+      "categories",
+      "date",
+      "summary"
+    ],
+    "unique_ground_truth_doc_ids": 4,
+    "ground_truth_doc_ids": [
+      "10.1007/s10278-026-02086-9",
+      "10.1111/exsy.70341",
+      "10.2118/234689-pa",
+      "10.21203/rs.3.rs-10178277/v1"
+    ],
+    "index_document_count": 24,
+    "missing_ground_truth_doc_ids": [],
+    "all_ground_truth_ids_in_index": true,
+    "index_coverage_required": true,
+    "sha256": "88846fd8575b8fe78cd02cc8e3647a06833666568a430c04d030acac8d13ba00",
+    "preview": [
+      {
+        "id": "q01-summary",
+        "question_type": "summary",
+        "question": "What is the main point summarized for paper '10.1111/exsy.70341' titled \"Hi\u2010 <scp>RAG</scp> : A Hierarchical Retrieval\u2010Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Language Model Agents\"?",
+        "ground_truth": "ABSTRACT As tool repositories for Large Language Model (LLM) agents grow from dozens to hundreds of endpoints, flat retrieval paradigms that treat the repository as an unstructured list suffer from context overload, cross\u2010domain semantic collision and degraded selection accuracy.",
+        "ground_truth_doc_ids": [
+          "10.1111/exsy.70341"
+        ]
+      },
+      {
+        "id": "q01-authors",
+        "question_type": "authors",
+        "question": "Who authored paper '10.1111/exsy.70341' titled \"Hi\u2010 <scp>RAG</scp> : A Hierarchical Retrieval\u2010Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Language Model Agents\"?",
+        "ground_truth": "Wei Tian, Yuhao Zhou",
+        "ground_truth_doc_ids": [
+          "10.1111/exsy.70341"
+        ]
+      },
+      {
+        "id": "q01-date",
+        "question_type": "date",
+        "question": "When was paper '10.1111/exsy.70341' titled \"Hi\u2010 <scp>RAG</scp> : A Hierarchical Retrieval\u2010Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Language Model Agents\" published?",
+        "ground_truth": "2026-08-01",
+        "ground_truth_doc_ids": [
+          "10.1111/exsy.70341"
+        ]
+      }
+    ],
+    "path": "C:\\Users\\ADMIN\\.vscode\\VinAI_LAB\\K4_Day10_Data-Pipeline-Data-Observability\\data\\eval\\test_set.json"
+  }
+}

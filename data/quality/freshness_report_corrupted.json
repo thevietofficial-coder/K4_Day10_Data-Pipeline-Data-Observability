@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-06T09:59:26.785515+00:00",
+  "generated_at": "2026-08-06T10:04:19.801417+00:00",
   "timestamp_source": "cleaned published field sourced from Crossref",
   "age_days_source": "cleaned age_days field materialized during cleaning",
   "freshness_basis": "published supplies date bounds; age_days is compared with the threshold",
@@ -7,7 +7,7 @@
   "freshness_threshold_days": 180,
   "latest_published": "2026-07-13",
   "oldest_published": "2026-02-12",
-  "stale_rows": 7,
+  "stale_rows": 6,
   "invalid_timestamp_rows": 0,
   "missing_age_days_rows": 0,
   "non_finite_age_days_rows": 0,
@@ -16,6 +16,6 @@
   "total_rows": 24,
   "min_age_days": 24,
   "max_age_days": 1161,
-  "mean_age_days": 369.96,
+  "mean_age_days": 328.29,
   "is_fresh": false
 }

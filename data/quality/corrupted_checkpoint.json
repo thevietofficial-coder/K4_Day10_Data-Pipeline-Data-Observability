@@ -1,0 +1,337 @@
+{
+  "generated_at": "2026-08-06T10:04:19.829833+00:00",
+  "checkpoint": "corrupted",
+  "same_test_set": true,
+  "test_set_sha256": "88846fd8575b8fe78cd02cc8e3647a06833666568a430c04d030acac8d13ba00",
+  "baseline_metrics": {
+    "retrieval_hit_rate": 1.0,
+    "mean_token_f1": 1.0,
+    "judge_accuracy": 1.0,
+    "mean_judge_score": 5
+  },
+  "corrupted_metrics": {
+    "retrieval_hit_rate": 0.5,
+    "mean_token_f1": 0.6337209302325582,
+    "judge_accuracy": 0.6875,
+    "mean_judge_score": 3.875
+  },
+  "metric_deltas": {
+    "retrieval_hit_rate": -0.5,
+    "mean_token_f1": -0.36627906976744184,
+    "judge_accuracy": -0.3125,
+    "mean_judge_score": -1.125
+  },
+  "evaluator_integrity": {
+    "corrupted_answers": 16,
+    "fallback_judges": 0,
+    "fallback_sample_ids": [],
+    "judge_mode": "structured_llm",
+    "silent_fallback_detected": false
+  },
+  "corruption_events": {
+    "drop_latest": {
+      "events": 1,
+      "affected_references": 2
+    },
+    "blank_summary": {
+      "events": 6,
+      "affected_references": 6
+    },
+    "inject_noise": {
+      "events": 6,
+      "affected_references": 6
+    },
+    "truncate_title": {
+      "events": 6,
+      "affected_references": 6
+    },
+    "stale_date": {
+      "events": 6,
+      "affected_references": 6
+    },
+    "add_duplicates": {
+      "events": 1,
+      "affected_references": 2
+    }
+  },
+  "signal_comparison": {
+    "row_count": {
+      "baseline": 24,
+      "corrupted": 24,
+      "delta": 0.0,
+      "changed": false
+    },
+    "null_paper_id_rows": {
+      "baseline": 0,
+      "corrupted": 0,
+      "delta": 0.0,
+      "changed": false
+    },
+    "null_title_rows": {
+      "baseline": 0,
+      "corrupted": 0,
+      "delta": 0.0,
+      "changed": false
+    },
+    "null_summary_rows": {
+      "baseline": 0,
+      "corrupted": 4,
+      "delta": 4.0,
+      "changed": true
+    },
+    "duplicate_paper_id_rows": {
+      "baseline": 0,
+      "corrupted": 4,
+      "delta": 4.0,
+      "changed": true
+    },
+    "duplicate_record_rows": {
+      "baseline": 0,
+      "corrupted": 4,
+      "delta": 4.0,
+      "changed": true
+    },
+    "short_summary_rows": {
+      "baseline": 0,
+      "corrupted": 4,
+      "delta": 4.0,
+      "changed": true
+    },
+    "stale_rows": {
+      "baseline": 0,
+      "corrupted": 6,
+      "delta": 6.0,
+      "changed": true
+    },
+    "max_age_days": {
+      "baseline": 175,
+      "corrupted": 1161,
+      "delta": 986.0,
+      "changed": true
+    },
+    "latest_published": {
+      "baseline": "2026-08-01",
+      "corrupted": "2026-07-13",
+      "delta": null,
+      "changed": true
+    },
+    "oldest_published": {
+      "baseline": "2026-02-12",
+      "corrupted": "2026-02-12",
+      "delta": null,
+      "changed": false
+    },
+    "is_fresh": {
+      "baseline": true,
+      "corrupted": false,
+      "delta": null,
+      "changed": true
+    }
+  },
+  "unchanged_signals": [
+    "row_count",
+    "null_paper_id_rows",
+    "null_title_rows",
+    "oldest_published"
+  ],
+  "worse_case_count": 8,
+  "worse_cases": [
+    {
+      "id": "q01-authors",
+      "question_type": "authors",
+      "ground_truth_doc_ids": [
+        "10.1111/exsy.70341"
+      ],
+      "baseline_retrieval_hit": true,
+      "corrupted_retrieval_hit": false,
+      "baseline_token_f1": 1.0,
+      "corrupted_token_f1": 0.0,
+      "token_f1_delta": -1.0,
+      "baseline_judge_score": 5,
+      "corrupted_judge_score": 1,
+      "judge_score_delta": -4,
+      "corrupted_answer": "Khoa Pham, Jiacheng Li, Hassan S. Al Khatib, Shahram Rahimi, Noorbakhsh Amiri Golilarz, Andy Perkins",
+      "corrupted_retrieved_doc_ids": [
+        "10.32473/flairs.39.1.141782",
+        "10.63646/kpqm1958",
+        "10.36227/techrxiv.177272838.89432844/v1",
+        "10.20944/preprints202604.0339.v1"
+      ],
+      "judge_reasoning": "The model answer lists authors who are not mentioned in the reference answer, indicating a complete mismatch with the correct authors of the paper."
+    },
+    {
+      "id": "q01-date",
+      "question_type": "date",
+      "ground_truth_doc_ids": [
+        "10.1111/exsy.70341"
+      ],
+      "baseline_retrieval_hit": true,
+      "corrupted_retrieval_hit": false,
+      "baseline_token_f1": 1.0,
+      "corrupted_token_f1": 0.0,
+      "token_f1_delta": -1.0,
+      "baseline_judge_score": 5,
+      "corrupted_judge_score": 1,
+      "judge_score_delta": -4,
+      "corrupted_answer": "2026-05-06",
+      "corrupted_retrieved_doc_ids": [
+        "10.32473/flairs.39.1.141782",
+        "10.63646/kpqm1958",
+        "10.20944/preprints202604.0339.v1",
+        "10.36227/techrxiv.177272838.89432844/v1"
+      ],
+      "judge_reasoning": "The model answer provides a date (2026-05-06) that is incorrect compared to the reference answer (2026-08-01). The model answer is not materially correct."
+    },
+    {
+      "id": "q02-authors",
+      "question_type": "authors",
+      "ground_truth_doc_ids": [
+        "10.2118/234689-pa"
+      ],
+      "baseline_retrieval_hit": true,
+      "corrupted_retrieval_hit": false,
+      "baseline_token_f1": 1.0,
+      "corrupted_token_f1": 0.0,
+      "token_f1_delta": -1.0,
+      "baseline_judge_score": 5,
+      "corrupted_judge_score": 1,
+      "judge_score_delta": -4,
+      "corrupted_answer": "Ruotong Wang, Nyutian Long, Shunqi Liu, Yuxi Wang, Zhen Qi, Huajun Zhang",
+      "corrupted_retrieved_doc_ids": [
+        "10.20944/preprints202604.0339.v1",
+        "10.21203/rs.3.rs-9770645/v1",
+        "10.63646/kpqm1958",
+        "10.55041/isjem07213"
+      ],
+      "judge_reasoning": "The model answer lists authors who are not associated with the paper, while the reference answer provides the correct authors. Therefore, the model answer is materially incorrect."
+    },
+    {
+      "id": "q02-date",
+      "question_type": "date",
+      "ground_truth_doc_ids": [
+        "10.2118/234689-pa"
+      ],
+      "baseline_retrieval_hit": true,
+      "corrupted_retrieval_hit": false,
+      "baseline_token_f1": 1.0,
+      "corrupted_token_f1": 0.0,
+      "token_f1_delta": -1.0,
+      "baseline_judge_score": 5,
+      "corrupted_judge_score": 2,
+      "judge_score_delta": -3,
+      "corrupted_answer": "2026-05-22",
+      "corrupted_retrieved_doc_ids": [
+        "10.21203/rs.3.rs-9770645/v1",
+        "10.20944/preprints202604.0339.v1",
+        "10.63646/kpqm1958",
+        "10.32473/flairs.39.1.141782"
+      ],
+      "judge_reasoning": "The model answer provides a date that is incorrect compared to the reference answer. The reference date is 2026-08-01, while the model answer states 2026-05-22, which is earlier and thus not materially correct."
+    },
+    {
+      "id": "q01-summary",
+      "question_type": "summary",
+      "ground_truth_doc_ids": [
+        "10.1111/exsy.70341"
+      ],
+      "baseline_retrieval_hit": true,
+      "corrupted_retrieval_hit": false,
+      "baseline_token_f1": 1.0,
+      "corrupted_token_f1": 0.0,
+      "token_f1_delta": -1.0,
+      "baseline_judge_score": 5,
+      "corrupted_judge_score": 5,
+      "judge_score_delta": 0,
+      "corrupted_answer": "",
+      "corrupted_retrieved_doc_ids": [
+        "10.32473/flairs.39.1.141782",
+        "10.20944/preprints202604.0339.v1",
+        "10.63646/kpqm1958",
+        "10.54254/2753-8818/2026.dl34055"
+      ],
+      "judge_reasoning": "The model answer accurately summarizes the main point of the paper by highlighting the challenges faced by flat retrieval paradigms in the context of growing tool repositories for LLM agents, which aligns with the reference answer."
+    },
+    {
+      "id": "q02-summary",
+      "question_type": "summary",
+      "ground_truth_doc_ids": [
+        "10.2118/234689-pa"
+      ],
+      "baseline_retrieval_hit": true,
+      "corrupted_retrieval_hit": false,
+      "baseline_token_f1": 1.0,
+      "corrupted_token_f1": 0.13953488372093023,
+      "token_f1_delta": -0.8604651162790697,
+      "baseline_judge_score": 5,
+      "corrupted_judge_score": 2,
+      "judge_score_delta": -3,
+      "corrupted_answer": "This study investigates a method that integrates retrieval-augmented mechanisms into large language model agents for scientific literature review generation.",
+      "corrupted_retrieved_doc_ids": [
+        "10.20944/preprints202604.0339.v1",
+        "10.21203/rs.3.rs-9770645/v1",
+        "10.55041/isjem07213",
+        "10.63646/kpqm1958"
+      ],
+      "judge_reasoning": "The model answer focuses on the integration of retrieval-augmented mechanisms into large language models for literature review generation, which is not the main point of the paper. The reference answer correctly highlights the application of LLMs for automated accident analysis and safety report generation in high-risk industrial settings, which is the core focus of the paper."
+    },
+    {
+      "id": "q01-categories",
+      "question_type": "categories",
+      "ground_truth_doc_ids": [
+        "10.1111/exsy.70341"
+      ],
+      "baseline_retrieval_hit": true,
+      "corrupted_retrieval_hit": false,
+      "baseline_token_f1": 1.0,
+      "corrupted_token_f1": 1.0,
+      "token_f1_delta": 0.0,
+      "baseline_judge_score": 5,
+      "corrupted_judge_score": 5,
+      "judge_score_delta": 0,
+      "corrupted_answer": "Unknown",
+      "corrupted_retrieved_doc_ids": [
+        "10.32473/flairs.39.1.141782",
+        "10.63646/kpqm1958",
+        "10.20944/preprints202604.0339.v1",
+        "10.36227/techrxiv.177272838.89432844/v1"
+      ],
+      "judge_reasoning": "Both the model answer and the reference answer correctly state 'Unknown', indicating that no categories are assigned to the paper. Therefore, the model answer is materially correct."
+    },
+    {
+      "id": "q02-categories",
+      "question_type": "categories",
+      "ground_truth_doc_ids": [
+        "10.2118/234689-pa"
+      ],
+      "baseline_retrieval_hit": true,
+      "corrupted_retrieval_hit": false,
+      "baseline_token_f1": 1.0,
+      "corrupted_token_f1": 1.0,
+      "token_f1_delta": 0.0,
+      "baseline_judge_score": 5,
+      "corrupted_judge_score": 5,
+      "judge_score_delta": 0,
+      "corrupted_answer": "Unknown",
+      "corrupted_retrieved_doc_ids": [
+        "10.21203/rs.3.rs-9770645/v1",
+        "10.32473/flairs.39.1.141782",
+        "10.55041/isjem07213",
+        "10.20944/preprints202604.0339.v1"
+      ],
+      "judge_reasoning": "Both the model answer and the reference answer correctly state 'Unknown', indicating that there is no information available regarding the categories assigned to the paper. Therefore, the answers are materially correct."
+    }
+  ],
+  "supported_links": [
+    "drop_latest IDs equal the missing ground-truth index IDs and cover all worsened samples",
+    "blank_summary coincides with increased null_summary_rows",
+    "add_duplicates coincides with increased duplicate_paper_id_rows",
+    "stale_date coincides with increased stale_rows"
+  ],
+  "corruption_types_without_direct_metric_attribution": [
+    "add_duplicates",
+    "blank_summary",
+    "inject_noise",
+    "stale_date",
+    "truncate_title"
+  ]
+}
