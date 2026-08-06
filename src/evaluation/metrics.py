@@ -124,6 +124,7 @@ def evaluate_pipeline(
                 "answer": result.answer,
                 "retrieved_doc_ids": result.retrieved_doc_ids,
                 "retrieved_contexts": result.retrieved_contexts,
+                "sources": result.sources,
                 "retrieval_hit": retrieval_hit,
                 "token_f1": _token_f1(item["ground_truth"], result.answer),
                 "judge": judge.model_dump(),

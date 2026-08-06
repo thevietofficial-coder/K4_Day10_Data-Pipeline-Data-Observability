@@ -15,6 +15,7 @@ class AnswerResult:
     retrieved_doc_ids: list[str]
     retrieved_contexts: list[str]
     retrieved_titles: list[str]
+    sources: list[dict[str, str]]
 
 
 def _extract_answer(question: str, top_result: SearchResult) -> str:
@@ -47,10 +48,21 @@ def answer_question(question: str, settings: Settings, index: LocalEmbeddingInde
         answer = "I don't know from the indexed corpus."
     else:
         answer = _extract_answer(question, retrieved[0])
+    
+    sources = [
+        {
+            "paper_id": item.paper_id,
+            "title": item.title,
+            "evidence": item.content,
+        }
+        for item in retrieved
+    ]
+    
     return AnswerResult(
         question=question,
         answer=answer,
         retrieved_doc_ids=[item.paper_id for item in retrieved],
         retrieved_contexts=[item.content for item in retrieved],
         retrieved_titles=[item.title for item in retrieved],
+        sources=sources,
     )

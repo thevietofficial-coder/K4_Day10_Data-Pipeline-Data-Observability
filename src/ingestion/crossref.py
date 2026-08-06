@@ -284,12 +284,19 @@ def fetch_source_records(settings: Settings) -> list[PaperRecord]:
 
     When ``settings.refresh_source`` is ``False`` and a cached raw-records
     snapshot already exists, the cached version is loaded instead of calling
-    the API.
+    the API. If it does not exist, a RuntimeError is raised to guarantee no live
+    fetch happens mid-run.
     """
     # Use cache when available and refresh not forced
-    if not settings.refresh_source and settings.paths.raw_records_json.exists():
-        logger.info("Loading cached raw records from %s", settings.paths.raw_records_json)
-        return load_raw_records(settings.paths.raw_records_json)
+    if not settings.refresh_source:
+        if settings.paths.raw_records_json.exists():
+            logger.info("Loading cached raw records from %s", settings.paths.raw_records_json)
+            return load_raw_records(settings.paths.raw_records_json)
+        else:
+            raise RuntimeError(
+                f"Frozen snapshot not found at {settings.paths.raw_records_json}. "
+                "Live fetch is disabled when refresh_source is False to guarantee consistent evaluation."
+            )
 
     # Wrap _do_fetch with retry configured from settings
     retryable_fetch = _build_retry(settings.crossref_max_retries)(_do_fetch)
