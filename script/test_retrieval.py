@@ -97,6 +97,49 @@ def test_corruption_impact(settings) -> None:
     explain_hit_rate("corrupted", settings.paths.corrupted_answers, corrupted_index)
 
 
+def test_repair_impact(settings) -> None:
+    """CP6: verify papers-repaired restores what drop_latest removed, smoke test the
+    same baseline query against all three states, and confirm the agent answers
+    correctly again using repaired tool results.
+    """
+    baseline_index = LocalEmbeddingIndex.load(settings)
+    corrupted_index = LocalEmbeddingIndex.load(settings, settings.paths.corrupted_embeddings_json)
+    repaired_index = LocalEmbeddingIndex.load(settings, settings.paths.repaired_embeddings_json)
+    print(
+        f"docs -> baseline: {len(baseline_index.documents)} | "
+        f"corrupted: {len(corrupted_index.documents)} | repaired: {len(repaired_index.documents)}"
+    )
+
+    dropped_ids = ["10.1111/exsy.70341", "10.2118/234689-pa"]
+    print("\n--- were the drop_latest papers actually restored (not just metric-level)? ---")
+    for paper_id in dropped_ids:
+        in_corrupted = corrupted_index.lookup(paper_id) is not None
+        in_repaired = repaired_index.lookup(paper_id) is not None
+        print(f"{paper_id} -> in corrupted: {in_corrupted} | in repaired: {in_repaired}")
+
+    query = "hierarchical retrieval augmented generation for tool selection in LLM agents"
+    print(f"\n--- same query across all 3 states: '{query}' ---")
+    for label, idx in [("baseline", baseline_index), ("corrupted", corrupted_index), ("repaired", repaired_index)]:
+        top = idx.search(query, top_k=1)[0]
+        print(f"[{label}] top-1: {top.score:.3f} | {top.paper_id} | {top.title[:60]}")
+
+    print("\n--- hit-rate breakdown: repaired ---")
+    explain_hit_rate("repaired", settings.paths.repaired_answers, repaired_index)
+
+    print("\n--- agent on repaired index, asking about a paper drop_latest had removed ---")
+    agent = build_agent(settings, repaired_index)
+    question = "What does the SafeRAG paper propose for oil and gas safety report generation?"
+    result = agent.invoke({"messages": [{"role": "user", "content": question}]})
+    for message in result["messages"]:
+        tool_calls = getattr(message, "tool_calls", None)
+        if tool_calls:
+            print(f"[{type(message).__name__}] tool call -> {[call['name'] for call in tool_calls]}")
+        elif type(message).__name__ == "ToolMessage":
+            print(f"[ToolMessage] tool={getattr(message, 'name', '?')} output={str(message.content)[:150]}")
+        else:
+            print(f"[{type(message).__name__}] {str(getattr(message, 'content', ''))[:300]}")
+
+
 def test_retrieval() -> None:
     settings = load_settings()
     index = LocalEmbeddingIndex.load(settings)
@@ -138,3 +181,6 @@ if __name__ == "__main__":
     if _settings.paths.corrupted_answers.exists():
         print("\n\n=== CP5: corruption impact ===")
         test_corruption_impact(_settings)
+    if _settings.paths.repaired_answers.exists():
+        print("\n\n=== CP6: repair impact ===")
+        test_repair_impact(_settings)
