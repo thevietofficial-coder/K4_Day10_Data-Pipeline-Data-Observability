@@ -629,6 +629,23 @@ def write_recovery_checkpoint(
         "corrupted": corrupted_quality.get("signals", {}),
         "repaired": repaired_quality.get("signals", {}),
     }
+    freshness_by_state = {
+        "baseline": baseline_freshness,
+        "corrupted": corrupted_freshness,
+        "repaired": repaired_freshness,
+    }
+    for state, signals in quality_by_state.items():
+        cross_artifact_pairs = (
+            ("row_count", "total_rows"),
+            ("stale_rows", "stale_rows"),
+            ("max_age_days", "max_age_days"),
+        )
+        for quality_name, freshness_name in cross_artifact_pairs:
+            if signals.get(quality_name) != freshness_by_state[state].get(freshness_name):
+                raise ValueError(
+                    f"{state} quality {quality_name} does not match freshness "
+                    f"{freshness_name}."
+                )
     signal_comparison: dict[str, dict[str, Any]] = {}
     unrecovered_signals: list[str] = []
     for name in quality_signal_names:
