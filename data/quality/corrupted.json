@@ -1,20 +1,21 @@
 {
   "report_name": "corrupted",
-  "generated_at": "2026-08-06T08:49:57.597465+00:00",
+  "generated_at": "2026-08-06T10:04:19.799879+00:00",
   "passed": false,
   "success": false,
   "status": "fail",
   "total_rows": 24,
   "failed_checks": [
     "paper_id_unique",
+    "records_unique",
     "summary_not_null",
     "summary_min_length",
     "age_days_fresh"
   ],
   "check_summary": {
-    "total": 9,
+    "total": 10,
     "passed": 5,
-    "failed": 4
+    "failed": 5
   },
   "signals": {
     "row_count": 24,
@@ -25,6 +26,8 @@
     "null_summary_rows": 4,
     "duplicate_paper_id_rows": 4,
     "duplicate_extra_rows": 2,
+    "duplicate_record_rows": 4,
+    "duplicate_record_extra_rows": 2,
     "short_summary_rows": 4,
     "null_age_days_rows": 0,
     "invalid_age_days_rows": 0,
@@ -54,6 +57,13 @@
       "passed": false,
       "observed": 4,
       "expected": "0 duplicate rows"
+    },
+    {
+      "name": "records_unique",
+      "dimension": "uniqueness",
+      "passed": false,
+      "observed": 4,
+      "expected": "0 duplicate records"
     },
     {
       "name": "title_not_null",

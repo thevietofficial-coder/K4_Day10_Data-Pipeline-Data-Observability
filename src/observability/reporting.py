@@ -240,6 +240,106 @@ def generate_phase1_report(
     write_text(Path(report_path), "\n".join(lines))
 
 
+def generate_corrupted_evidence_report(
+    report_path,
+    checkpoint: dict[str, Any],
+) -> None:
+    """Render CP5 evidence without attributing unsupported metric changes."""
+    metric_rows = []
+    for name, baseline in checkpoint.get("baseline_metrics", {}).items():
+        corrupted = checkpoint.get("corrupted_metrics", {}).get(name)
+        delta = checkpoint.get("metric_deltas", {}).get(name)
+        metric_rows.append(
+            f"| `{name}` | {_display(baseline)} | {_display(corrupted)} | {_delta_display(delta)} |"
+        )
+
+    event_rows = [
+        f"| `{name}` | {_display(values.get('events'))} | {_display(values.get('affected_references'))} |"
+        for name, values in sorted(checkpoint.get("corruption_events", {}).items())
+    ]
+    signal_rows = [
+        "| `{}` | {} | {} | {} | {} |".format(
+            name,
+            _display(values.get("baseline")),
+            _display(values.get("corrupted")),
+            _delta_display(values.get("delta")),
+            "changed" if values.get("changed") else "unchanged",
+        )
+        for name, values in checkpoint.get("signal_comparison", {}).items()
+    ]
+
+    worse_cases = checkpoint.get("worse_cases", [])
+    if worse_cases:
+        case = worse_cases[0]
+        case_lines = [
+            f"- Sample: `{_display(case.get('id'))}` ({_display(case.get('question_type'))})",
+            f"- Ground-truth document IDs: {_display(case.get('ground_truth_doc_ids'))}",
+            f"- Retrieval hit: {_display(case.get('baseline_retrieval_hit'))} → {_display(case.get('corrupted_retrieval_hit'))}",
+            f"- Token F1: {_display(case.get('baseline_token_f1'))} → {_display(case.get('corrupted_token_f1'))}",
+            f"- Judge score: {_display(case.get('baseline_judge_score'))} → {_display(case.get('corrupted_judge_score'))}",
+            f"- Corrupted answer: {_display(case.get('corrupted_answer'))}",
+            f"- Retrieved IDs: {_display(case.get('corrupted_retrieved_doc_ids'))}",
+            f"- Judge reasoning: {_display(case.get('judge_reasoning'))}",
+        ]
+    else:
+        case_lines = ["No per-question degradation was measured."]
+
+    integrity = checkpoint.get("evaluator_integrity", {})
+    supported_links = checkpoint.get("supported_links", [])
+    unsupported_types = checkpoint.get("corruption_types_without_direct_metric_attribution", [])
+    unchanged_signals = checkpoint.get("unchanged_signals", [])
+    silent_fallback = "yes" if integrity.get("silent_fallback_detected") else "no"
+    lines = [
+        "# CP5 — Corrupted Data Evidence Report",
+        "",
+        f"Frozen test-set SHA-256: `{_display(checkpoint.get('test_set_sha256'))}`",
+        "",
+        "## Metric comparison",
+        "",
+        "| Metric | Baseline | Corrupted | Delta |",
+        "| --- | ---: | ---: | ---: |",
+        *metric_rows,
+        "",
+        "## Evaluator integrity",
+        "",
+        f"- Judge mode: `{_display(integrity.get('judge_mode'))}`",
+        f"- Recorded fallback judges: {_display(integrity.get('fallback_judges'))}",
+        f"- Silent fallback detected: {silent_fallback}",
+        "",
+        "A fallback is never counted silently: fallback reasoning is stored per answer and counted in the checkpoint.",
+        "",
+        "## Corruption log summary",
+        "",
+        "| Type | Log events | Affected references |",
+        "| --- | ---: | ---: |",
+        *event_rows,
+        "",
+        "## Quality and freshness signals",
+        "",
+        "| Signal | Baseline | Corrupted | Delta | State |",
+        "| --- | ---: | ---: | ---: | --- |",
+        *signal_rows,
+        "",
+        "## One measured worse case",
+        "",
+        *case_lines,
+        "",
+        "## Supported evidence links",
+        "",
+        *([f"- {item}." for item in supported_links] or ["- No supported link was measured."]),
+        "",
+        "## Guard against over-claiming",
+        "",
+        f"Unchanged signals: {_display(unchanged_signals)}.",
+        "",
+        f"Corruption types without direct per-question metric attribution: {_display(unsupported_types)}.",
+        "",
+        "These types may have changed data-quality signals, but this run does not isolate their individual causal contribution to an answer metric.",
+        "",
+    ]
+    write_text(Path(report_path), "\n".join(lines))
+
+
 def generate_corruption_report(
     report_path,
     baseline_metrics: dict[str, Any],
