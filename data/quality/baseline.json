@@ -1,14 +1,14 @@
 {
   "report_name": "baseline",
-  "generated_at": "2026-08-06T08:48:36.588279+00:00",
+  "generated_at": "2026-08-06T09:58:44.328457+00:00",
   "passed": true,
   "success": true,
   "status": "pass",
   "total_rows": 24,
   "failed_checks": [],
   "check_summary": {
-    "total": 9,
-    "passed": 9,
+    "total": 10,
+    "passed": 10,
     "failed": 0
   },
   "signals": {
@@ -20,6 +20,8 @@
     "null_summary_rows": 0,
     "duplicate_paper_id_rows": 0,
     "duplicate_extra_rows": 0,
+    "duplicate_record_rows": 0,
+    "duplicate_record_extra_rows": 0,
     "short_summary_rows": 0,
     "null_age_days_rows": 0,
     "invalid_age_days_rows": 0,
@@ -49,6 +51,13 @@
       "passed": true,
       "observed": 0,
       "expected": "0 duplicate rows"
+    },
+    {
+      "name": "records_unique",
+      "dimension": "uniqueness",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 duplicate records"
     },
     {
       "name": "title_not_null",

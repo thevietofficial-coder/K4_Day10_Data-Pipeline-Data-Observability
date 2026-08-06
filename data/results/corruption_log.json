@@ -17,26 +17,8 @@
   },
   {
     "type": "blank_summary",
-    "record_id": "10.21203/rs.3.rs-9882260/v1",
-    "before": "Abstract Large language models (LLMs) increasingly support reasoning, question answering, decision support, and retrieval-augmented knowledge work. High benchmark performance, however, does not by itself establish reliability under realistic deployment conditions. This article treats LLM reliability as a pipeline-level evaluation construct rather than a single capability score. Using a semi-systematic evidence-map design, it synthesizes 77 studies selected from a broader OpenAlex audit trail of 1,010 candidate records. The review focuses on four linked dimensions: reasoning faithfulness, factual grounding, evaluation validity, and evidence-use reliability in retrieval-augmented generation. The synthesis distinguishes answer accuracy from reasoning faithfulness, truth from source-grounded support, benchmark performance from evaluation validity, and retrieved evidence from evidence actually used during generation. Across the reviewed literature, reasoning traces can improve answer accuracy without demonstrating process faithfulness; self-correction without external feedback shows inconsistent reliability; hallucination, attribution error, and sycophancy represent separable factuality risks; benchmark scores are sensitive to contamination, saturation, and protocol variation; and retrieval-augmented generation reliability depends on retrieval relevance, source sufficiency, context utilization, attribution, and calibrated refusal. The article contributes an operational reliability-gap framework and testable propositions for evaluating interactions among reasoning, factual grounding, evaluation trust, evidence use, lateral reasoning, and equitable multilingual reliability. The framework supports reliability-centered evaluation protocols that report process verification, claim-level grounding, contamination controls, uncertainty and refusal behavior, and stratified performance across language, culture, and domain contexts.",
-    "after": ""
-  },
-  {
-    "type": "blank_summary",
-    "record_id": "10.32473/flairs.39.1.141782",
-    "before": "Mental health conditions affect over one billion individuals globally and remain challenging to assess accurately due to fragmented clinical data and subjective evaluation methods. Mental health support systems increasingly rely on large language models (LLMs) due to their capabilities in natural language understanding and response generation. While retrieval augmented generation (RAG) and agentic frameworks have improved grounded generation in several domains, there is limited understanding of how such approaches affect response quality in mental health related tasks. In particular, the impact of structured context management and autonomous refinement on clinical relevance, empathy, completeness, and safety remains underexplored. In this study, we investigate the effects of agentic RAG on the performance of multiple mental health oriented language models. We adopt a common pipeline configuration that integrates patient dialogue, structured patient history, and externally retrieved clinical knowledge. The pipeline consists of coordinated stages for patient context retrieval, context augmentation, and response generation with autonomous evaluation and iterative refinement. We conduct empirical evaluations across four mental health models under this pipeline and analyze their performance in terms of medical accuracy, empathy, completeness, safety, and overall response quality. Our results show consistent trends toward improved responses when structured context handling and agentic refinement are applied, indicating that these components influence model behavior independent of architecture. This work provides insight into how agentic RAG influences model outputs in mental health applications and highlights the importance of context engineering and quality control in LLM based support systems. These findings indicate that Agentic Context Engineering (ACE) may contribute to improved reasoning depth, contextual alignment, and patient centered response quality across diverse models. However, despite the improvements observed, the framework remains an early step toward more reliable AI assisted mental health assessment. Continued research is needed to refine model architectures, optimize prompt engineering, and expand evaluation across broader and more diverse clinical contexts to ensure safety, consistency, and real world applicability.",
-    "after": ""
-  },
-  {
-    "type": "blank_summary",
-    "record_id": "10.35314/3y9hy151",
-    "before": "Large language models have the potential to improve the quality of information services in higher education environments through responsive and natural interactions. However, LLMs are prone to generating answers that are not supported by valid knowledge sources due to knowledge cut-off limitations. This study implements Retrieval-Augmented Generation on LLMs to build an information service chatbot for the Indonesian University of Science and Technology (USTI). RAG is built using a hybrid retrieval mechanism that combines dense retrieval and sparse retrieval (BM25) through reciprocal rank fusion and is equipped with cross-encoder reranking. The knowledge base is compiled from official and public documents obtained through the USTI website. The evaluation was conducted using 13 test queries by comparing several configurations to analyze the contribution of each component. The evaluation results show that the hybrid retrieval configuration produces the best retrieval performance with Precision@3 of 71.7%, Recall@3 of 87.5%, and NDCG@3 of 96.3%. In addition, the application of RAG improved the quality of answers compared to LLM without retrieval, as shown by an increase in BERTScore-F1 from 84.8% to 89.4% and a faithfulness score of 88.8%. These findings indicate that RAG integration improves the relevance of LLM answers to source documents, with the hybrid configuration providing an optimal balance between retrieval quality and faithfulness.",
-    "after": ""
-  },
-  {
-    "type": "blank_summary",
-    "record_id": "10.21203/rs.3.rs-10012178/v1",
-    "before": "Abstract Enterprise adoption of artificial intelligence (AI) systems, including Generative AI (GenAI), Retrieval-Augmented Generation (RAG), and agentic AI, is advancing faster than many organizations can adapt their governance, audit, cybersecurity, and executive oversight practices. This paper develops a proposed integrated AI governance prioritization architecture using a design-science research approach, supported by exploratory platform-risk analysis, a reproducible platform-risk dataset, a Monte Carlo robustness assessment, a framework coverage matrix, a Governance Priority Score (GPS)-based demonstration, and a public-document relevance assessment. The primary contribution is an integrated governance decision-support architecture that uses the Enterprise AI Platform Taxonomy (EAPT) to estimate platform burden, the Enterprise AI Risk Taxonomy (EART) to organize governance-risk exposure, the Enterprise AI Governance Maturity Model (EAGM) to represent organizational readiness, and the Integrated Agentic AI Governance Framework (IAGF) to identify agentic AI oversight requirements within a unified workflow. These components are operationally connected through GPS, which links platform burden, governancerisk gaps, organizational readiness, agentic runtime-control needs, and executive decision support. The proposed architecture draws upon NIST AI RMF, NIST AI 600-1, ISO/IEC 42001, COBIT, OWASP LLM Top 10, MITRE ATLAS, the EU AI Act, and related AI governance literature. A rubric-based analytical dataset covering 19 enterprise AI platforms evaluates each platform across eight subdimensions, with final platform-risk scores computed as the arithmetic mean of data access scope, operational autonomy, tool/API integration breadth, external connectivity, governance burden, cybersecurity exposure, adoption and shadow-AI risk, and supply-chain integrity. TThe expanded scoring method produces high rank stability relative to the original final-score dataset, with Spearman’s ρ = 0.996, and remains directionally stable under coding-uncertainty stress testing; these results are interpreted only as internal coding stability and robustness, not external validation. Public evidence from U.S. government agencies, universities, healthcare systems, and financial institutions is used to assess architecture relevance and observability, not to claim organizational effectiveness. The paper contributes a bounded design-science foundation for future inter-rater reliability testing, Delphi expert validation, organizational pilots, psychometric evaluation, and dashboard usability assessment.",
+    "record_id": "10.1093/sleep/zsag091.0346",
+    "before": "Abstract Introduction While Large Language Models (LLMs) offer generative capabilities, generic models often lack domain-specific grounding, leading to hallucinations in high-stakes contexts. However, LLMs can serve as clinical decision support tools if augmented with specific domain data. This study evaluates the utility of Retrieval-Augmented Generation (RAG) applied to open-source LLMs, utilizing a curated knowledge base of authoritative sleep medicine textbooks, to quantify improvement in performance. Methods We evaluated four open-source models—Llama-70B, Llama-8B, Qwen-14B, and Qwen-235B, linked to a RAG system indexing five standard textbooks, including ICSD-3 TR. Models were tested on sleep board–style MCQs and clinical vignettes diagnostic accuracy. Performance was assessed across nine configurations derived from three factors: RAG pipeline complexity (Plain vs. Complicated), textbook preprocessing (Uncleaned vs. Cleaned/TOC-aligned), and retriever type (Dense-only vs. Hybrid). Metrics included MCQ Accuracy and the rates at which the correct diagnosis appeared as the top result or within the top 5 differential diagnosis lists for vignettes. Results RAG consistently outperformed the no-RAG baseline, yielding absolute performance gains of 5.6%–10.7% for MCQs and 8.1%–10.2% for the top diagnosis in cases across all models. For MCQs, Qwen-235B achieved the highest accuracy of 87.3% (vs. 81.7% baseline) using the Plain RAG configuration with Cleaned (TOC-aligned) Hybrid retrieval. Llama-70B followed with 83.6% in the same configuration. For case vignettes, Qwen-235B achieved a correct top diagnosis rate of 66.3% and a correct diagnosis rate within the top 5 differential diagnosis lists of 90.8% using Cleaned Hybrid retrieval configurations. Hybrid retrieval (Dense + Sparse) consistently surpassed Dense-only methods. Notably, while larger models benefited from Cleaned text, smaller models (e.g., Qwen-14B) achieved higher top diagnosis rates with Uncleaned text (57.1% vs. 51.0%), suggesting a dependency on redundant context in lower-parameter settings. Conclusion RAG significantly enhances knowledge performance of open-source LLMs in sleep medicine. Hybrid retrieval and curated, TOC-aligned knowledge bases yield optimal results for large models, whereas smaller models benefit from the redundancy of uncleaned text. These findings suggest that RAG systems can augment LLMs in domain specific knowledge for clinical decision support. Support (if any)",
     "after": ""
   },
   {
@@ -46,28 +28,34 @@
     "after": ""
   },
   {
-    "type": "inject_noise",
+    "type": "blank_summary",
+    "record_id": "10.36227/techrxiv.177272838.89432844/v1",
+    "before": "Retrieval-Augmented Generation (RAG) has emerged as a powerful paradigm for combining large language models with external knowledge sources to produce accurate, context-aware, and verifiable outputs. In this survey, we focus on an advanced instantiation of this paradigm, referred to as Deep RAG, which integrates reasoning, memory, and multi-step planning into end-to-end research workflows. We provide a structured overview of Deep RAG systems, covering key components such as query planning, information retrieval, memory management, and answer generation, as well as practical optimization techniques including supervised fine-tuning, iterative self-evolving, and agentic reinforcement learning. We analyze different planning strategies, adaptive retrieval mechanisms, conflict resolution methods, and multimodal synthesis, highlighting both their strengths and limitations. By categorizing approaches according to workflow types, reasoning strategies, and optimization paradigms, we clarify the current landscape and identify open challenges for evaluation, scalability, and multimodal reasoning. This survey aims to provide a comprehensive roadmap for designing flexible, reliable, and intelligent Deep RAG systems capable of performing complex, real-world research tasks with minimal human supervision.",
+    "after": ""
+  },
+  {
+    "type": "blank_summary",
     "record_id": "10.21203/rs.3.rs-9882260/v1",
-    "before_length": 0,
-    "after_length": 114
+    "before": "Abstract Large language models (LLMs) increasingly support reasoning, question answering, decision support, and retrieval-augmented knowledge work. High benchmark performance, however, does not by itself establish reliability under realistic deployment conditions. This article treats LLM reliability as a pipeline-level evaluation construct rather than a single capability score. Using a semi-systematic evidence-map design, it synthesizes 77 studies selected from a broader OpenAlex audit trail of 1,010 candidate records. The review focuses on four linked dimensions: reasoning faithfulness, factual grounding, evaluation validity, and evidence-use reliability in retrieval-augmented generation. The synthesis distinguishes answer accuracy from reasoning faithfulness, truth from source-grounded support, benchmark performance from evaluation validity, and retrieved evidence from evidence actually used during generation. Across the reviewed literature, reasoning traces can improve answer accuracy without demonstrating process faithfulness; self-correction without external feedback shows inconsistent reliability; hallucination, attribution error, and sycophancy represent separable factuality risks; benchmark scores are sensitive to contamination, saturation, and protocol variation; and retrieval-augmented generation reliability depends on retrieval relevance, source sufficiency, context utilization, attribution, and calibrated refusal. The article contributes an operational reliability-gap framework and testable propositions for evaluating interactions among reasoning, factual grounding, evaluation trust, evidence use, lateral reasoning, and equitable multilingual reliability. The framework supports reliability-centered evaluation protocols that report process verification, claim-level grounding, contamination controls, uncertainty and refusal behavior, and stratified performance across language, culture, and domain contexts.",
+    "after": ""
+  },
+  {
+    "type": "blank_summary",
+    "record_id": "10.21203/rs.3.rs-10178277/v1",
+    "before": "Abstract Time-series foundation models and retrieval-based augmentation have recently emerged as relevant tools for financial forecasting, yet it remains unclear when explicit historical retrieval helps a pre-trained probabilistic forecaster in noisy equity settings. This study evaluates that question through Cross-Market Retrieval-Augmented Lag-Llama (CM-RAF-Lag-Llama), a controlled framework for comparing Lag-Llama-only forecasts with retrieval-augmented forecasts across emerging and developed market panels. The main validation uses three balanced seven-asset panels, IDX7, US7, and JP7, producing a 48-configuration panel-context-horizon grid across four context lengths and four prediction horizons. The hybrid system retrieves analogous historical windows from an indexed memory and blends the retrieved continuation with the Lag-Llama forecast while preserving the same forecasting backbone. In the same-backbone return validation, at least one retrieval variant reduces Lag-Llama MSE in all 48 configurations, with aggregate lower-error retrieval MSE reductions of 28.85\\% for IDX7, 27.27\\% for US7, and 33.60\\% for JP7. A second OHLCV-derived stock-feature experiment evaluates log-price, log-volume, range-volatility, and 20-day realized-volatility targets across 72 matched configurations. In that experiment, validation-selected RAF reduces MSE relative to Lag-Llama-only in 68 of 72 configurations and records the lowest MSE among the compared systems in 22 configurations, including 17 of 18 non-log-price US7 settings. A mechanism-level single-series ablation further compares Lag-Llama-only against Lag-Llama + RAF under zero-shot and scheduler-based inference, showing that retrieval effects are horizon-sensitive. The results indicate that retrieval can serve as an external-memory correction for Lag-Llama under selected equity targets, especially when volatility or volume structure provides reusable historical analogs.",
+    "after": ""
   },
   {
     "type": "inject_noise",
-    "record_id": "10.3390/buildings16132637",
-    "before_length": 2207,
-    "after_length": 2321
+    "record_id": "10.55041/isjem07213",
+    "before_length": 1571,
+    "after_length": 1685
   },
   {
     "type": "inject_noise",
-    "record_id": "10.35314/3y9hy151",
-    "before_length": 0,
-    "after_length": 114
-  },
-  {
-    "type": "inject_noise",
-    "record_id": "10.63646/kpqm1958",
-    "before_length": 1635,
-    "after_length": 1749
+    "record_id": "10.22214/ijraset.2026.82233",
+    "before_length": 1949,
+    "after_length": 2063
   },
   {
     "type": "inject_noise",
@@ -77,21 +65,27 @@
   },
   {
     "type": "inject_noise",
-    "record_id": "10.36227/techrxiv.177272838.89432844/v1",
-    "before_length": 1309,
-    "after_length": 1423
+    "record_id": "10.1093/sleep/zsag091.0346",
+    "before_length": 0,
+    "after_length": 114
   },
   {
-    "type": "truncate_title",
-    "record_id": "10.70121/001c.158711",
-    "before": "The Role of Retrieval-Augmented Generation in Improving Factual Accuracy for Medical Large Language Models",
-    "after": "The Role o..."
-  },
-  {
-    "type": "truncate_title",
+    "type": "inject_noise",
     "record_id": "10.35314/3y9hy151",
-    "before": "Implementation of Retrieval-Augmented Generation Method on Large Language Model for Development of Campus Service and Information Chatbot",
-    "after": "Implementa..."
+    "before_length": 1462,
+    "after_length": 1576
+  },
+  {
+    "type": "inject_noise",
+    "record_id": "10.20944/preprints202604.0339.v1",
+    "before_length": 1687,
+    "after_length": 1801
+  },
+  {
+    "type": "truncate_title",
+    "record_id": "10.36227/techrxiv.177272838.89432844/v1",
+    "before": "A Survey of (Deep RAG) Deep Retrieval Augmented Generation and Reasoning in Large Language Models",
+    "after": "A Survey o..."
   },
   {
     "type": "truncate_title",
@@ -101,33 +95,27 @@
   },
   {
     "type": "truncate_title",
+    "record_id": "10.3390/buildings16132637",
+    "before": "An Agentic AI System for Roof Design Compliance Using Computer Vision, Retrieval-Augmented Generation and Large Language Models",
+    "after": "An Agentic..."
+  },
+  {
+    "type": "truncate_title",
+    "record_id": "10.20944/preprints202604.0339.v1",
+    "before": "Retrieval-Augmented Large Language Model Agents for Automated Scientific Literature Review Generation",
+    "after": "Retrieval-..."
+  },
+  {
+    "type": "truncate_title",
     "record_id": "10.55041/isjem07213",
     "before": "Speculative Retrieval-Augmented Generation for Cost-Efficient Large Language Model Inference",
     "after": "Speculativ..."
   },
   {
     "type": "truncate_title",
-    "record_id": "10.52060/juptik.v4i1.4318",
-    "before": "Chatbot Hybrid Fatwa MUI Menggunakan Retrieval Augmented Generation dan Large Language Model",
-    "after": "Chatbot Hy..."
-  },
-  {
-    "type": "truncate_title",
-    "record_id": "10.47576/2949-1894.2026.7.7.023",
-    "before": "Снижение рисков применения LLM (Large Language Model) в сфере экономической безопасности предприятий молочной промышленности на основе подхода RAG (Retrieval-Augmented Generation)",
-    "after": "Снижение р..."
-  },
-  {
-    "type": "stale_date",
-    "record_id": "10.3390/app16052244",
-    "before": 161,
-    "after": 1161
-  },
-  {
-    "type": "stale_date",
-    "record_id": "10.70121/001c.158711",
-    "before": 144,
-    "after": 1144
+    "record_id": "10.21203/rs.3.rs-9770645/v1",
+    "before": "Adapting Large Language Models for Low-Resource Regulated Domains: A Fine-Tuning and Retrieval-Augmented Generation Approach to Insurance Information Delivery in Kenya",
+    "after": "Adapting L..."
   },
   {
     "type": "stale_date",
@@ -137,21 +125,33 @@
   },
   {
     "type": "stale_date",
-    "record_id": "10.21203/rs.3.rs-9770645/v1",
-    "before": 76,
-    "after": 1076
-  },
-  {
-    "type": "stale_date",
-    "record_id": "10.21203/rs.3.rs-9882260/v1",
-    "before": 65,
-    "after": 1065
-  },
-  {
-    "type": "stale_date",
     "record_id": "10.35314/3y9hy151",
     "before": 161,
     "after": 1161
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.21203/rs.3.rs-10178277/v1",
+    "before": 27,
+    "after": 1027
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.47576/2949-1894.2026.7.7.023",
+    "before": 52,
+    "after": 1052
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.52060/juptik.v4i1.4318",
+    "before": 66,
+    "after": 1066
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.70121/001c.158711",
+    "before": 144,
+    "after": 1144
   },
   {
     "type": "add_duplicates",

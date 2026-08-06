@@ -6,11 +6,12 @@ import pandas as pd
 import json
 import numpy as np
 
-def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
+def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path, seed: int = 42) -> pd.DataFrame:
     """Simulate nhieu dang data corruption."""
     if df.empty:
         return df
-        
+
+    rng = np.random.default_rng(seed)
     corrupted_df = df.copy()
     corruption_log = []
     
@@ -31,7 +32,7 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
     if n > 0:
         # 2. Blank summary o mot so dong (30%)
         num_blank = max(1, int(n * 0.3))
-        blank_idx = np.random.choice(corrupted_df.index, size=num_blank, replace=False)
+        blank_idx = rng.choice(corrupted_df.index, size=num_blank, replace=False)
         for idx in blank_idx:
             paper_id = corrupted_df.loc[idx, 'paper_id']
             before_val = corrupted_df.loc[idx, 'summary']
@@ -40,7 +41,7 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
         
         # 3. Inject noise vao text (30%)
         num_noise = max(1, int(n * 0.3))
-        noise_idx = np.random.choice(corrupted_df.index, size=num_noise, replace=False)
+        noise_idx = rng.choice(corrupted_df.index, size=num_noise, replace=False)
         for idx in noise_idx:
             paper_id = corrupted_df.loc[idx, 'paper_id']
             before_val = corrupted_df.loc[idx, 'summary']
@@ -50,7 +51,7 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
         
         # 4. Lam title bi truncate (30%)
         num_trunc = max(1, int(n * 0.3))
-        trunc_idx = np.random.choice(corrupted_df.index, size=num_trunc, replace=False)
+        trunc_idx = rng.choice(corrupted_df.index, size=num_trunc, replace=False)
         for idx in trunc_idx:
             paper_id = corrupted_df.loc[idx, 'paper_id']
             before_val = corrupted_df.loc[idx, 'title']
@@ -60,7 +61,7 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
         
         # 5. Lam published date cu di (30%) -> tang age_days len 1000 ngay
         num_stale = max(1, int(n * 0.3))
-        stale_idx = np.random.choice(corrupted_df.index, size=num_stale, replace=False)
+        stale_idx = rng.choice(corrupted_df.index, size=num_stale, replace=False)
         for idx in stale_idx:
             paper_id = corrupted_df.loc[idx, 'paper_id']
             before_val = int(corrupted_df.loc[idx, 'age_days'])

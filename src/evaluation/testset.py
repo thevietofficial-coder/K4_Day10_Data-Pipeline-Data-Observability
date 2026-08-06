@@ -98,17 +98,26 @@ def build_test_set(df: pd.DataFrame, output_path) -> list[dict[str, Any]]:
         # qa.py recognizes the quoted value through LocalEmbeddingIndex.lookup;
         # using the clean paper_id also works when a title contains apostrophes.
         label = f"paper '{paper_id}' titled \"{title}\""
-        questions = (
+        questions = [
             ("summary", f"What is the main point summarized for {label}?", summary, "summary"),
             ("authors", f"Who authored {label}?", authors, "authors_joined"),
             ("date", f"When was {label} published?", published, "published"),
-            (
-                "categories",
-                f"What categories are recorded for {label}?",
-                categories,
-                "categories_joined",
-            ),
-        )
+        ]
+        # Crossref often omits `subject`; cleaning.py falls back to the literal
+        # "Unknown" for every such record. A categories question built from that
+        # fallback would match any document (right or wrong), silently masking
+        # retrieval failures in token-F1/judge scoring. Only ask it when the
+        # paper actually has real category data.
+        raw_categories = row.get("categories")
+        if isinstance(raw_categories, list) and raw_categories:
+            questions.append(
+                (
+                    "categories",
+                    f"What categories are recorded for {label}?",
+                    categories,
+                    "categories_joined",
+                )
+            )
         for question_type, question, ground_truth, ground_truth_field in questions:
             test_set.append(
                 {

@@ -28,7 +28,7 @@ All values below are rendered from the source, evaluation, quality, and freshnes
 
 | Metric | Value |
 | --- | ---: |
-| `samples` | 16 |
+| `samples` | 12 |
 | `retrieval_hit_rate` | 1.0000 |
 | `mean_token_f1` | 1.0000 |
 | `judge_accuracy` | 1.0000 |
@@ -39,13 +39,14 @@ All values below are rendered from the source, evaluation, quality, and freshnes
 
 ## Data quality
 
-Overall status: **PASS** ({"failed": 0, "passed": 9, "total": 9})
+Overall status: **PASS** ({"failed": 0, "passed": 10, "total": 10})
 
 | Check | Dimension | Result | Observed | Expected |
 | --- | --- | --- | ---: | --- |
 | `row_count` | volume | PASS | 24 | >= 4 |
 | `paper_id_not_null` | completeness | PASS | 0 | 0 missing rows |
 | `paper_id_unique` | uniqueness | PASS | 0 | 0 duplicate rows |
+| `records_unique` | uniqueness | PASS | 0 | 0 duplicate records |
 | `title_not_null` | completeness | PASS | 0 | 0 missing rows |
 | `summary_not_null` | completeness | PASS | 0 | 0 missing rows |
 | `summary_min_length` | validity | PASS | 0 | 0 rows shorter than 80 characters |
@@ -57,8 +58,8 @@ Overall status: **PASS** ({"failed": 0, "passed": 9, "total": 9})
 
 | Signal | Value |
 | --- | --- |
-| Timestamp source | Crossref published field in the cleaned dataset |
-| Observation time | 2026-08-06T08:48:36.588279+00:00 |
+| Timestamp source | cleaned published field sourced from Crossref |
+| Observation time | 2026-08-06T09:58:44.328457+00:00 |
 | Threshold (days) | 180 |
 | Latest publication | 2026-08-01 |
 | Oldest publication | 2026-02-12 |
