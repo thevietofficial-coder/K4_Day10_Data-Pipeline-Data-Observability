@@ -11,7 +11,8 @@ from datasets import Dataset
 from pydantic import BaseModel, Field
 
 from core.config import Settings
-from core.utils import normalize_whitespace, read_json, write_json
+from core.utils import normalize_whitespace, write_json
+from evaluation.testset import load_frozen_test_set
 from retrieval.embeddings import MiniLMEmbeddings
 from retrieval.index import LocalEmbeddingIndex
 from retrieval.llm import build_llm
@@ -107,7 +108,13 @@ def evaluate_pipeline(
     metrics_output_path,
     answers_output_path,
 ) -> EvaluationBundle:
-    test_set = read_json(test_set_path)
+    index_doc_ids = [str(document["paper_id"]) for document in index.documents]
+    require_index_coverage = index.collection_name != settings.corrupted_collection_name
+    test_set, test_set_audit = load_frozen_test_set(
+        test_set_path,
+        available_doc_ids=index_doc_ids,
+        require_index_coverage=require_index_coverage,
+    )
     answers: list[dict[str, Any]] = []
 
     for item in test_set:
@@ -137,6 +144,9 @@ def evaluate_pipeline(
         "mean_token_f1": mean(item["token_f1"] for item in answers),
         "judge_accuracy": mean(1.0 if item["judge"]["correct"] else 0.0 for item in answers),
         "mean_judge_score": mean(item["judge"]["score"] for item in answers),
+        "test_set_audit": {
+            key: value for key, value in test_set_audit.items() if key != "preview"
+        },
     }
     summary["ragas"] = _run_ragas(settings, answers)
 

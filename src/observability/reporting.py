@@ -72,14 +72,21 @@ def _delta_display(delta: float | None) -> str:
     return "N/A" if delta is None else f"{delta:+.4f}"
 
 
+def _preview(value: Any, limit: int = 180) -> str:
+    rendered = _display(value)
+    return rendered if len(rendered) <= limit else rendered[: limit - 1] + "…"
+
+
 def generate_phase1_report(
     report_path,
     source_summary: dict[str, Any],
     metrics: dict[str, Any],
     quality: dict[str, Any],
     freshness: dict[str, Any],
+    index_audit: dict[str, Any] | None = None,
+    test_set_audit: dict[str, Any] | None = None,
 ) -> None:
-    """Write a baseline report whose values come only from pipeline artifacts."""
+    """Write a CP3-ready baseline report using only supplied artifact values."""
     source_rows = [f"| `{key}` | {_display(value)} |" for key, value in sorted(source_summary.items())]
     if not source_rows:
         source_rows = ["| N/A | No source summary supplied |"]
@@ -93,6 +100,62 @@ def generate_phase1_report(
         "| Quality and freshness evidence | `data/quality/` |",
         "| This baseline report | `data/reports/phase1_report.md` |",
     ]
+    if index_audit is None:
+        index_audit_lines = [
+            "Index audit was not supplied. CP3 must pass the embedding manifest audit payload; no value is inferred.",
+        ]
+    else:
+        index_audit_lines = [
+            "| Signal | Value |",
+            "| --- | --- |",
+            f"| Status | {_display(index_audit.get('status'))} |",
+            f"| Backend/model | {_display(index_audit.get('backend'))} / {_display(index_audit.get('embedding_model'))} |",
+            f"| Collection | {_display(index_audit.get('collection_name'))} |",
+            f"| Expected collection | {_display(index_audit.get('expected_collection_name'))} |",
+            f"| Manifest documents | {_display(index_audit.get('manifest_document_count'))} |",
+            f"| Chroma documents | {_display(index_audit.get('collection_document_count'))} |",
+            f"| Duplicate document IDs | {_display(index_audit.get('duplicate_document_ids'))} |",
+            f"| Missing clean IDs | {_display(index_audit.get('missing_expected_doc_ids'))} |",
+            f"| Warnings | {_display(index_audit.get('warnings'))} |",
+        ]
+
+    if test_set_audit is None:
+        test_set_audit_lines = [
+            "Test-set audit was not supplied. CP3 must load and validate the frozen JSON before evaluation.",
+        ]
+        test_set_preview_lines: list[str] = []
+    else:
+        test_set_audit_lines = [
+            "| Signal | Value |",
+            "| --- | --- |",
+            f"| Status | {_display(test_set_audit.get('status'))} |",
+            f"| Frozen path | {_display(test_set_audit.get('path'))} |",
+            f"| SHA-256 | `{_display(test_set_audit.get('sha256'))}` |",
+            f"| Samples | {_display(test_set_audit.get('samples'))} |",
+            f"| Question types | {_display(test_set_audit.get('question_types'))} |",
+            f"| Ground-truth documents | {_display(test_set_audit.get('unique_ground_truth_doc_ids'))} |",
+            f"| All IDs present in index | {_display(test_set_audit.get('all_ground_truth_ids_in_index'))} |",
+        ]
+        preview_rows = test_set_audit.get("preview", [])
+        test_set_preview_lines = [
+            "",
+            "### Persisted-row preview",
+            "",
+            "| ID | Type | Question | Ground truth | Document IDs |",
+            "| --- | --- | --- | --- | --- |",
+            *[
+                "| `{}` | {} | {} | {} | {} |".format(
+                    _display(item.get("id")),
+                    _display(item.get("question_type")),
+                    _preview(item.get("question")),
+                    _preview(item.get("ground_truth")),
+                    _display(item.get("ground_truth_doc_ids")),
+                )
+                for item in preview_rows
+            ],
+        ]
+
+    quality_signals = quality.get("signals", {})
     lines = [
         "# Phase 1 — Baseline Data and RAG Report",
         "",
@@ -110,6 +173,15 @@ def generate_phase1_report(
         "| --- | --- |",
         *artifact_rows,
         "",
+        "## Embedding manifest and collection audit",
+        "",
+        *index_audit_lines,
+        "",
+        "## Frozen evaluation-set audit",
+        "",
+        *test_set_audit_lines,
+        *test_set_preview_lines,
+        "",
         "## RAG evaluation",
         "",
         "| Metric | Value |",
@@ -125,6 +197,21 @@ def generate_phase1_report(
         "| Check | Dimension | Result | Observed | Expected |",
         "| --- | --- | --- | ---: | --- |",
         *_quality_rows(quality),
+        "",
+        "### Baseline comparison signals",
+        "",
+        "These values are the control signals to compare with corrupted and repaired runs.",
+        "",
+        "| Signal | Baseline |",
+        "| --- | ---: |",
+        f"| Row count | {_display(quality_signals.get('row_count'))} |",
+        f"| Null paper IDs | {_display(quality_signals.get('null_paper_id_rows'))} |",
+        f"| Null titles | {_display(quality_signals.get('null_title_rows'))} |",
+        f"| Null summaries | {_display(quality_signals.get('null_summary_rows'))} |",
+        f"| Duplicate paper-ID rows | {_display(quality_signals.get('duplicate_paper_id_rows'))} |",
+        f"| Duplicate records | {_display(quality_signals.get('duplicate_record_rows'))} |",
+        f"| Stale rows | {_display(freshness.get('stale_rows'))} |",
+        f"| Maximum age (days) | {_display(freshness.get('max_age_days'))} |",
         "",
         "## Freshness",
         "",
