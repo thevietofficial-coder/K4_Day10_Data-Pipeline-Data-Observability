@@ -62,6 +62,10 @@ class Settings:
     max_results: int
     top_k: int
     freshness_threshold_days: int
+    crossref_base_url: str
+    crossref_mailto: str
+    crossref_timeout: int
+    crossref_max_retries: int
     refresh_source: bool
     refresh_test_set: bool
     paths: Paths
@@ -129,6 +133,10 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         max_results=24,
         top_k=4,
         freshness_threshold_days=freshness_threshold_days,
+        crossref_base_url=os.getenv("CROSSREF_BASE_URL", "https://api.crossref.org/works"),
+        crossref_mailto=os.getenv("CROSSREF_MAILTO", "student@example.com"),
+        crossref_timeout=int(os.getenv("CROSSREF_TIMEOUT", "30")),
+        crossref_max_retries=int(os.getenv("CROSSREF_MAX_RETRIES", "5")),
         refresh_source=os.getenv("REFRESH_SOURCE", "").lower() in {"1", "true", "yes"},
         refresh_test_set=os.getenv("REFRESH_TEST_SET", "").lower() in {"1", "true", "yes"},
         paths=paths,
