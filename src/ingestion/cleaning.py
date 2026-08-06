@@ -34,11 +34,14 @@ def build_clean_dataframe(records: list[PaperRecord], run_date: datetime) -> pd.
     df['categories'] = df['categories'].apply(lambda x: x if isinstance(x, list) else [])
 
     # 2. Parse published/updated date.
+    # published_dt is stored tz-naive, so run_date must be made tz-naive too
+    # before it is used to fill missing dates or subtracted for age_days.
+    run_date_naive = run_date.replace(tzinfo=None) if run_date.tzinfo is not None else run_date
     df['published_dt'] = pd.to_datetime(df['published'], errors='coerce', utc=True).dt.tz_localize(None)
-    df['published_dt'] = df['published_dt'].fillna(run_date)
+    df['published_dt'] = df['published_dt'].fillna(run_date_naive)
 
     # 3. Tinh age_days.
-    df['age_days'] = (run_date - df['published_dt']).dt.days
+    df['age_days'] = (run_date_naive - df['published_dt']).dt.days
     df['age_days'] = df['age_days'].clip(lower=0)
 
     # 4. Tao cot helper:

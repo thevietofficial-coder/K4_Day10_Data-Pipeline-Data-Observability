@@ -1,0 +1,96 @@
+{
+  "report_name": "repaired",
+  "generated_at": "2026-08-06T08:50:21.806446+00:00",
+  "passed": true,
+  "success": true,
+  "status": "pass",
+  "total_rows": 24,
+  "failed_checks": [],
+  "check_summary": {
+    "total": 9,
+    "passed": 9,
+    "failed": 0
+  },
+  "signals": {
+    "row_count": 24,
+    "expected_min_rows": 4,
+    "requested_max_results": 24,
+    "null_paper_id_rows": 0,
+    "null_title_rows": 0,
+    "null_summary_rows": 0,
+    "duplicate_paper_id_rows": 0,
+    "duplicate_extra_rows": 0,
+    "short_summary_rows": 0,
+    "null_age_days_rows": 0,
+    "invalid_age_days_rows": 0,
+    "stale_rows": 0,
+    "max_age_days": 175,
+    "freshness_threshold_days": 180,
+    "age_days_source": "clean age_days derived from Crossref published timestamp"
+  },
+  "checks": [
+    {
+      "name": "row_count",
+      "dimension": "volume",
+      "passed": true,
+      "observed": 24,
+      "expected": ">= 4"
+    },
+    {
+      "name": "paper_id_not_null",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 missing rows"
+    },
+    {
+      "name": "paper_id_unique",
+      "dimension": "uniqueness",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 duplicate rows"
+    },
+    {
+      "name": "title_not_null",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 missing rows"
+    },
+    {
+      "name": "summary_not_null",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 missing rows"
+    },
+    {
+      "name": "summary_min_length",
+      "dimension": "validity",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 rows shorter than 80 characters"
+    },
+    {
+      "name": "age_days_not_null",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 missing rows"
+    },
+    {
+      "name": "age_days_valid",
+      "dimension": "validity",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 negative ages"
+    },
+    {
+      "name": "age_days_fresh",
+      "dimension": "freshness",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 rows older than 180 days"
+    }
+  ]
+}

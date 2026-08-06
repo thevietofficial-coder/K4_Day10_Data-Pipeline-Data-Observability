@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What is the main point summarized for paper '10.1111/exsy.70341' titled \"Hi\u2010 <scp>RAG</scp> : A Hierarchical Retrieval\u2010Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Language Model Agents\"?",
+    "answer": "The main point of the paper titled \"Hi\u2010RAG: A Hierarchical Retrieval\u2010Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Language Model Agents\" is to address the challenges faced by Large Language Model (LLM) agents as their tool repositories expand. The authors propose Hi\u2010RAG, a framework that utilizes a hierarchical approach to improve tool selection accuracy and efficiency. This is achieved through a two-stage process: the first stage employs a hybrid retrieval strategy to identify candidate services, while the second stage re-ranks these candidates using a type-aware mechanism. The framework demonstrates significant improvements in accuracy and reduced token consumption compared to existing methods, and it introduces MCPBench, a benchmark for hierarchical tool selection. Overall, Hi\u2010RAG enhances the scalability and generalizability of tool selection in LLM agents."
+  },
+  {
+    "question": "Who authored paper '10.1111/exsy.70341' titled \"Hi\u2010 <scp>RAG</scp> : A Hierarchical Retrieval\u2010Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Language Model Agents\"?",
+    "answer": "The paper titled \"Hi\u2010 <scp>RAG</scp> : A Hierarchical Retrieval\u2010Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Language Model Agents\" was authored by Wei Tian and Yuhao Zhou."
+  },
+  {
+    "question": "When was paper '10.1111/exsy.70341' titled \"Hi\u2010 <scp>RAG</scp> : A Hierarchical Retrieval\u2010Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Language Model Agents\" published?",
+    "answer": "The paper titled \"Hi\u2010RAG: A Hierarchical Retrieval\u2010Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Language Model Agents\" with the identifier '10.1111/exsy.70341' was published in 2023."
+  }
+]

@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-08-06T08:48:36.588279+00:00",
+  "generated_at": "2026-08-06T08:49:57.598217+00:00",
   "timestamp_source": "Crossref published field in the cleaned dataset",
   "observation_clock": "UTC",
   "freshness_threshold_days": 180,
-  "latest_published": "2026-08-01",
+  "latest_published": "2026-07-13",
   "oldest_published": "2026-02-12",
   "stale_rows": 0,
   "invalid_timestamp_rows": 0,
   "future_timestamp_rows": 0,
   "total_rows": 24,
-  "min_age_days": 5,
+  "min_age_days": 24,
   "max_age_days": 175,
-  "mean_age_days": 76.58,
+  "mean_age_days": 78.29,
   "is_fresh": true
 }
