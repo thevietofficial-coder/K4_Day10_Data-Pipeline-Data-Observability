@@ -1,0 +1,35 @@
+[
+  {
+    "type": "drop_latest",
+    "params": {
+      "count": 1
+    },
+    "affected_ids": [
+      "10.1234/sample3"
+    ]
+  },
+  {
+    "type": "blank_summary",
+    "record_id": "10.1234/sample1",
+    "before": "This is a summary about data observability.",
+    "after": ""
+  },
+  {
+    "type": "inject_noise",
+    "record_id": "10.1234/sample1",
+    "before_length": 0,
+    "after_length": 114
+  },
+  {
+    "type": "truncate_title",
+    "record_id": "10.1234/sample1",
+    "before": "A great paper on Data Pipeline",
+    "after": "A great pa..."
+  },
+  {
+    "type": "stale_date",
+    "record_id": "10.1234/sample1",
+    "before": 1040,
+    "after": 2040
+  }
+]
