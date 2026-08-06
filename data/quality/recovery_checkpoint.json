@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-08-06T10:22:06.410587+00:00",
+  "generated_at": "2026-08-06T10:42:51.895962+00:00",
   "checkpoint": "recovery",
   "same_test_set": true,
-  "test_set_sha256": "88846fd8575b8fe78cd02cc8e3647a06833666568a430c04d030acac8d13ba00",
-  "samples": 16,
+  "test_set_sha256": "266f52d3ae78614c7848de14442c582425040d18b86175524cad947f4496befa",
+  "samples": 12,
   "metric_comparison": {
     "retrieval_hit_rate": {
       "baseline": 1.0,
@@ -15,26 +15,26 @@
     },
     "mean_token_f1": {
       "baseline": 1.0,
-      "corrupted": 0.6337209302325582,
+      "corrupted": 0.4346153846153846,
       "repaired": 1.0,
-      "corruption_delta": -0.36627906976744184,
-      "repair_delta": 0.36627906976744184,
+      "corruption_delta": -0.5653846153846154,
+      "repair_delta": 0.5653846153846154,
       "residual_vs_baseline": 0.0
     },
     "judge_accuracy": {
       "baseline": 1.0,
-      "corrupted": 0.6875,
+      "corrupted": 0.5833333333333334,
       "repaired": 1.0,
-      "corruption_delta": -0.3125,
-      "repair_delta": 0.3125,
+      "corruption_delta": -0.41666666666666663,
+      "repair_delta": 0.41666666666666663,
       "residual_vs_baseline": 0.0
     },
     "mean_judge_score": {
       "baseline": 5.0,
-      "corrupted": 3.875,
+      "corrupted": 3.5,
       "repaired": 5.0,
-      "corruption_delta": -1.125,
-      "repair_delta": 1.125,
+      "corruption_delta": -1.5,
+      "repair_delta": 1.5,
       "residual_vs_baseline": 0.0
     }
   },
@@ -65,10 +65,10 @@
     },
     "null_summary_rows": {
       "baseline": 0,
-      "corrupted": 4,
+      "corrupted": 6,
       "repaired": 0,
-      "corruption_delta": 4,
-      "repair_delta": -4,
+      "corruption_delta": 6,
+      "repair_delta": -6,
       "residual_vs_baseline": 0
     },
     "duplicate_paper_id_rows": {
@@ -89,18 +89,18 @@
     },
     "short_summary_rows": {
       "baseline": 0,
-      "corrupted": 4,
-      "repaired": 0,
-      "corruption_delta": 4,
-      "repair_delta": -4,
-      "residual_vs_baseline": 0
-    },
-    "stale_rows": {
-      "baseline": 0,
       "corrupted": 6,
       "repaired": 0,
       "corruption_delta": 6,
       "repair_delta": -6,
+      "residual_vs_baseline": 0
+    },
+    "stale_rows": {
+      "baseline": 0,
+      "corrupted": 7,
+      "repaired": 0,
+      "corruption_delta": 7,
+      "repair_delta": -7,
       "residual_vs_baseline": 0
     },
     "max_age_days": {
@@ -148,7 +148,7 @@
   },
   "repaired_index_audit": {
     "status": "pass",
-    "manifest_path": "C:\\Users\\ADMIN\\.vscode\\VinAI_LAB\\K4_Day10_Data-Pipeline-Data-Observability\\data\\embeddings\\papers_embeddings_repaired.json",
+    "manifest_path": "C:\\CODE\\AITHUCCHIEN\\1. LABS\\K4_Day10_Data-Pipeline-Data-Observability\\data\\embeddings\\papers_embeddings_repaired.json",
     "backend": "chroma",
     "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
     "collection_name": "papers-repaired",
@@ -164,12 +164,10 @@
     "missing_expected_doc_ids": [],
     "unexpected_doc_ids": [],
     "recorded_persist_path": "C:\\CODE\\AITHUCCHIEN\\1. LABS\\K4_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
-    "runtime_persist_path": "C:\\Users\\ADMIN\\.vscode\\VinAI_LAB\\K4_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
+    "runtime_persist_path": "C:\\CODE\\AITHUCCHIEN\\1. LABS\\K4_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
     "collection_error": null,
     "errors": [],
-    "warnings": [
-      "manifest persist_path differs from the runtime Chroma path; the runtime path was used for collection audit"
-    ]
+    "warnings": []
   },
   "evaluator_integrity": {
     "fallback_sample_ids": {
@@ -181,16 +179,23 @@
     "judge_anomalies": [
       {
         "state": "corrupted",
-        "id": "q01-summary",
+        "id": "q02-summary",
         "kind": "empty_answer_marked_correct",
         "judge_score": 5,
-        "judge_reasoning": "The model answer accurately summarizes the main point of the paper by highlighting the challenges faced by flat retrieval paradigms in the context of growing tool repositories for LLM agents, which aligns with the reference answer."
+        "judge_reasoning": "The model answer accurately captures the essence of the reference answer by highlighting the use of large language models in high-risk industrial settings for automated accident analysis and safety report generation."
+      },
+      {
+        "state": "corrupted",
+        "id": "q04-summary",
+        "kind": "empty_answer_marked_correct",
+        "judge_score": 4,
+        "judge_reasoning": "The model answer captures the essence of the reference answer by mentioning the relevance of time-series foundation models and retrieval-based augmentation for financial forecasting. However, it lacks the specific mention of the uncertainty regarding the effectiveness of historical retrieval in noisy equity settings, which is a key point in the reference."
       }
     ]
   },
   "case_summary": {
-    "degraded_under_corruption": 8,
-    "recovered_to_baseline": 8,
+    "degraded_under_corruption": 7,
+    "recovered_to_baseline": 7,
     "unresolved_after_repair": 0
   },
   "representative_recovery_case": {
@@ -221,7 +226,7 @@
     },
     "answers": {
       "baseline": "Wei Tian, Yuhao Zhou",
-      "corrupted": "Khoa Pham, Jiacheng Li, Hassan S. Al Khatib, Shahram Rahimi, Noorbakhsh Amiri Golilarz, Andy Perkins",
+      "corrupted": "Ben J. Weber, Clara M. Hofmann, Amara N. Okoye",
       "repaired": "Wei Tian, Yuhao Zhou"
     },
     "retrieved_doc_ids": {
@@ -232,10 +237,10 @@
         "10.20944/preprints202604.0339.v1"
       ],
       "corrupted": [
-        "10.32473/flairs.39.1.141782",
         "10.63646/kpqm1958",
-        "10.36227/techrxiv.177272838.89432844/v1",
-        "10.20944/preprints202604.0339.v1"
+        "10.52060/juptik.v4i1.4318",
+        "10.20944/preprints202604.0339.v1",
+        "10.32473/flairs.39.1.141782"
       ],
       "repaired": [
         "10.1111/exsy.70341",
@@ -273,7 +278,7 @@
     },
     "answers": {
       "baseline": "Wei Tian, Yuhao Zhou",
-      "corrupted": "Khoa Pham, Jiacheng Li, Hassan S. Al Khatib, Shahram Rahimi, Noorbakhsh Amiri Golilarz, Andy Perkins",
+      "corrupted": "Ben J. Weber, Clara M. Hofmann, Amara N. Okoye",
       "repaired": "Wei Tian, Yuhao Zhou"
     },
     "retrieved_doc_ids": {
@@ -284,10 +289,10 @@
         "10.20944/preprints202604.0339.v1"
       ],
       "corrupted": [
-        "10.32473/flairs.39.1.141782",
         "10.63646/kpqm1958",
-        "10.36227/techrxiv.177272838.89432844/v1",
-        "10.20944/preprints202604.0339.v1"
+        "10.52060/juptik.v4i1.4318",
+        "10.20944/preprints202604.0339.v1",
+        "10.32473/flairs.39.1.141782"
       ],
       "repaired": [
         "10.1111/exsy.70341",
@@ -325,7 +330,7 @@
     },
     "answers": {
       "baseline": "Wei Tian, Yuhao Zhou",
-      "corrupted": "Khoa Pham, Jiacheng Li, Hassan S. Al Khatib, Shahram Rahimi, Noorbakhsh Amiri Golilarz, Andy Perkins",
+      "corrupted": "Ben J. Weber, Clara M. Hofmann, Amara N. Okoye",
       "repaired": "Wei Tian, Yuhao Zhou"
     },
     "retrieved_doc_ids": {
@@ -336,10 +341,10 @@
         "10.20944/preprints202604.0339.v1"
       ],
       "corrupted": [
-        "10.32473/flairs.39.1.141782",
         "10.63646/kpqm1958",
-        "10.36227/techrxiv.177272838.89432844/v1",
-        "10.20944/preprints202604.0339.v1"
+        "10.52060/juptik.v4i1.4318",
+        "10.20944/preprints202604.0339.v1",
+        "10.32473/flairs.39.1.141782"
       ],
       "repaired": [
         "10.1111/exsy.70341",

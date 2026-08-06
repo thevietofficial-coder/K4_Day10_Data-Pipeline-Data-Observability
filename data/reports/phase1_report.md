@@ -26,43 +26,17 @@ All values below are rendered from the source, evaluation, quality, and freshnes
 
 ## Embedding manifest and collection audit
 
-| Signal | Value |
-| --- | --- |
-| Status | pass |
-| Backend/model | chroma / sentence-transformers/all-MiniLM-L6-v2 |
-| Collection | papers-baseline |
-| Expected collection | papers-baseline |
-| Manifest documents | 24 |
-| Chroma documents | 24 |
-| Duplicate document IDs | 0 |
-| Missing clean IDs | [] |
-| Warnings | ["manifest persist_path differs from the runtime Chroma path; the runtime path was used for collection audit"] |
+Index audit was not supplied. CP3 must pass the embedding manifest audit payload; no value is inferred.
 
 ## Frozen evaluation-set audit
 
-| Signal | Value |
-| --- | --- |
-| Status | pass |
-| Frozen path | C:\Users\ADMIN\.vscode\VinAI_LAB\K4_Day10_Data-Pipeline-Data-Observability\data\eval\test_set.json |
-| SHA-256 | `88846fd8575b8fe78cd02cc8e3647a06833666568a430c04d030acac8d13ba00` |
-| Samples | 16 |
-| Question types | ["authors", "categories", "date", "summary"] |
-| Ground-truth documents | 4 |
-| All IDs present in index | PASS |
-
-### Persisted-row preview
-
-| ID | Type | Question | Ground truth | Document IDs |
-| --- | --- | --- | --- | --- |
-| `q01-summary` | summary | What is the main point summarized for paper '10.1111/exsy.70341' titled "Hi‐ <scp>RAG</scp> : A Hierarchical Retrieval‐Augmented Generation Framework for Scalable and Generalisabl… | ABSTRACT As tool repositories for Large Language Model (LLM) agents grow from dozens to hundreds of endpoints, flat retrieval paradigms that treat the repository as an unstructure… | ["10.1111/exsy.70341"] |
-| `q01-authors` | authors | Who authored paper '10.1111/exsy.70341' titled "Hi‐ <scp>RAG</scp> : A Hierarchical Retrieval‐Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large… | Wei Tian, Yuhao Zhou | ["10.1111/exsy.70341"] |
-| `q01-date` | date | When was paper '10.1111/exsy.70341' titled "Hi‐ <scp>RAG</scp> : A Hierarchical Retrieval‐Augmented Generation Framework for Scalable and Generalisable Tool Selection in Large Lan… | 2026-08-01 | ["10.1111/exsy.70341"] |
+Test-set audit was not supplied. CP3 must load and validate the frozen JSON before evaluation.
 
 ## RAG evaluation
 
 | Metric | Value |
 | --- | ---: |
-| `samples` | 16 |
+| `samples` | 12 |
 | `retrieval_hit_rate` | 1.0000 |
 | `mean_token_f1` | 1.0000 |
 | `judge_accuracy` | 1.0000 |
@@ -113,7 +87,7 @@ These values are the control signals to compare with corrupted and repaired runs
 | Signal | Value |
 | --- | --- |
 | Timestamp source | cleaned published field sourced from Crossref |
-| Observation time | 2026-08-06T09:37:18.836400+00:00 |
+| Observation time | 2026-08-06T10:41:36.147594+00:00 |
 | Threshold (days) | 180 |
 | Latest publication | 2026-08-01 |
 | Oldest publication | 2026-02-12 |

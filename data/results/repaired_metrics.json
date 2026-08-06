@@ -6,10 +6,9 @@
   "mean_judge_score": 5,
   "test_set_audit": {
     "status": "pass",
-    "samples": 16,
+    "samples": 12,
     "question_types": [
       "authors",
-      "categories",
       "date",
       "summary"
     ],
@@ -24,8 +23,8 @@
     "missing_ground_truth_doc_ids": [],
     "all_ground_truth_ids_in_index": true,
     "index_coverage_required": true,
-    "sha256": "88846fd8575b8fe78cd02cc8e3647a06833666568a430c04d030acac8d13ba00",
-    "path": "C:\\Users\\ADMIN\\.vscode\\VinAI_LAB\\K4_Day10_Data-Pipeline-Data-Observability\\data\\eval\\test_set.json"
+    "sha256": "266f52d3ae78614c7848de14442c582425040d18b86175524cad947f4496befa",
+    "path": "C:\\CODE\\AITHUCCHIEN\\1. LABS\\K4_Day10_Data-Pipeline-Data-Observability\\data\\eval\\test_set.json"
   },
   "ragas": {
     "skipped": "Set RUN_RAGAS=1 to enable the slower Ragas pass."

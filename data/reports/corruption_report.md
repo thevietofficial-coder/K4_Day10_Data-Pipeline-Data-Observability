@@ -1,7 +1,7 @@
 # CP6 - Baseline, Corrupted, and Repaired Comparison
 
-Frozen test-set SHA-256: `88846fd8575b8fe78cd02cc8e3647a06833666568a430c04d030acac8d13ba00`
-Samples: 16
+Frozen test-set SHA-256: `266f52d3ae78614c7848de14442c582425040d18b86175524cad947f4496befa`
+Samples: 12
 
 All values below are rendered from the validated metrics, answers, quality, freshness, manifest, and collection artifacts. Delta corruption = corrupted - baseline; delta repair = repaired - corrupted; residual = repaired - baseline.
 
@@ -10,9 +10,9 @@ All values below are rendered from the validated metrics, answers, quality, fres
 | Metric | Baseline | Corrupted | Repaired | Delta corruption | Delta repair | Residual |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | `retrieval_hit_rate` | 1.0000 | 0.5000 | 1.0000 | -0.5000 | +0.5000 | +0.0000 |
-| `mean_token_f1` | 1.0000 | 0.6337 | 1.0000 | -0.3663 | +0.3663 | +0.0000 |
-| `judge_accuracy` | 1.0000 | 0.6875 | 1.0000 | -0.3125 | +0.3125 | +0.0000 |
-| `mean_judge_score` | 5.0000 | 3.8750 | 5.0000 | -1.1250 | +1.1250 | +0.0000 |
+| `mean_token_f1` | 1.0000 | 0.4346 | 1.0000 | -0.5654 | +0.5654 | +0.0000 |
+| `judge_accuracy` | 1.0000 | 0.5833 | 1.0000 | -0.4167 | +0.4167 | +0.0000 |
+| `mean_judge_score` | 5.0000 | 3.5000 | 5.0000 | -1.5000 | +1.5000 | +0.0000 |
 
 ## Quality and freshness signals
 
@@ -21,11 +21,11 @@ All values below are rendered from the validated metrics, answers, quality, fres
 | `row_count` | 24 | 24 | 24 | +0.0000 | +0.0000 | +0.0000 |
 | `null_paper_id_rows` | 0 | 0 | 0 | +0.0000 | +0.0000 | +0.0000 |
 | `null_title_rows` | 0 | 0 | 0 | +0.0000 | +0.0000 | +0.0000 |
-| `null_summary_rows` | 0 | 4 | 0 | +4.0000 | -4.0000 | +0.0000 |
+| `null_summary_rows` | 0 | 6 | 0 | +6.0000 | -6.0000 | +0.0000 |
 | `duplicate_paper_id_rows` | 0 | 4 | 0 | +4.0000 | -4.0000 | +0.0000 |
 | `duplicate_record_rows` | 0 | 4 | 0 | +4.0000 | -4.0000 | +0.0000 |
-| `short_summary_rows` | 0 | 4 | 0 | +4.0000 | -4.0000 | +0.0000 |
-| `stale_rows` | 0 | 6 | 0 | +6.0000 | -6.0000 | +0.0000 |
+| `short_summary_rows` | 0 | 6 | 0 | +6.0000 | -6.0000 | +0.0000 |
+| `stale_rows` | 0 | 7 | 0 | +7.0000 | -7.0000 | +0.0000 |
 | `max_age_days` | 175 | 1161 | 175 | +986.0000 | -986.0000 | +0.0000 |
 | `latest_published` | 2026-08-01 | 2026-07-13 | 2026-08-01 | N/A | N/A | N/A |
 | `oldest_published` | 2026-02-12 | 2026-02-12 | 2026-02-12 | N/A | N/A | N/A |
@@ -38,7 +38,7 @@ Freshness uses the cleaned `published` field sourced from Crossref and the mater
 
 ## Recovery evidence from actual answers
 
-Cases degraded under corruption: 8; recovered to baseline: 8; unresolved after repair: 0.
+Cases degraded under corruption: 7; recovered to baseline: 7; unresolved after repair: 0.
 
 Representative sample: `q01-authors` (authors)
 
@@ -47,7 +47,7 @@ Representative sample: `q01-authors` (authors)
 - Token F1 (baseline/corrupted/repaired): {"baseline": 1.0, "corrupted": 0.0, "repaired": 1.0}
 - Judge score (baseline/corrupted/repaired): {"baseline": 5, "corrupted": 1, "repaired": 5}
 - Baseline answer: Wei Tian, Yuhao Zhou
-- Corrupted answer: Khoa Pham, Jiacheng Li, Hassan S. Al Khatib, Shahram Rahimi, Noorbakhsh Amiri Golilarz, Andy Perkins
+- Corrupted answer: Ben J. Weber, Clara M. Hofmann, Amara N. Okoye
 - Repaired answer: Wei Tian, Yuhao Zhou
 
 ## Honest demo hit and miss
@@ -66,9 +66,10 @@ This statement is limited to the monitored fields and the frozen test set; it is
 
 Recorded fallback sample IDs: {"baseline": [], "corrupted": [], "repaired": []}.
 Repaired index audit: pass; collection `papers-repaired`; documents 24.
-Repaired index audit warnings: ["manifest persist_path differs from the runtime Chroma path; the runtime path was used for collection audit"].
+Repaired index audit warnings: [].
 
-- `q01-summary` in `corrupted`: `empty_answer_marked_correct`; judge score 5. This is a measured judge false positive.
+- `q02-summary` in `corrupted`: `empty_answer_marked_correct`; judge score 5. This is a measured judge false positive.
+- `q04-summary` in `corrupted`: `empty_answer_marked_correct`; judge score 4. This is a measured judge false positive.
 
 - The fixed test set has 16 questions over 4 papers, so it is not a broad benchmark.
 - Questions include an exact paper ID and title, which makes retrieval easier than open-ended RAG.
