@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-08-06T09:37:18.867695+00:00",
+  "checkpoint": "baseline",
+  "ready_for_comparison": true,
+  "metrics": {
+    "samples": 16,
+    "retrieval_hit_rate": 1.0,
+    "mean_token_f1": 1.0,
+    "judge_accuracy": 1.0,
+    "mean_judge_score": 5,
+    "ragas": {
+      "skipped": "Set RUN_RAGAS=1 to enable the slower Ragas pass."
+    }
+  },
+  "answer_evidence": {
+    "answers": 16,
+    "retrieval_hits": 16,
+    "retrieval_misses": 0,
+    "fallback_judges": 0,
+    "example_hit_id": "q01-summary",
+    "example_miss_id": null
+  },
+  "quality": {
+    "status": "pass",
+    "signals": {
+      "row_count": 24,
+      "expected_min_rows": 4,
+      "requested_max_results": 24,
+      "null_paper_id_rows": 0,
+      "null_title_rows": 0,
+      "null_summary_rows": 0,
+      "duplicate_paper_id_rows": 0,
+      "duplicate_extra_rows": 0,
+      "duplicate_record_rows": 0,
+      "duplicate_record_extra_rows": 0,
+      "short_summary_rows": 0,
+      "null_age_days_rows": 0,
+      "invalid_age_days_rows": 0,
+      "stale_rows": 0,
+      "max_age_days": 175,
+      "freshness_threshold_days": 180,
+      "age_days_source": "clean age_days derived from Crossref published timestamp"
+    }
+  },
+  "freshness": {
+    "generated_at": "2026-08-06T09:37:18.836400+00:00",
+    "timestamp_source": "cleaned published field sourced from Crossref",
+    "age_days_source": "cleaned age_days field materialized during cleaning",
+    "freshness_basis": "published supplies date bounds; age_days is compared with the threshold",
+    "observation_clock": "UTC",
+    "freshness_threshold_days": 180,
+    "latest_published": "2026-08-01",
+    "oldest_published": "2026-02-12",
+    "stale_rows": 0,
+    "invalid_timestamp_rows": 0,
+    "missing_age_days_rows": 0,
+    "non_finite_age_days_rows": 0,
+    "negative_age_days_rows": 0,
+    "future_timestamp_rows": 0,
+    "total_rows": 24,
+    "min_age_days": 5,
+    "max_age_days": 175,
+    "mean_age_days": 76.58,
+    "is_fresh": true
+  },
+  "artifact_audit": {
+    "status": "pass",
+    "collection_name": "papers-baseline",
+    "manifest_document_count": 24,
+    "collection_document_count": 24,
+    "test_set_sha256": "88846fd8575b8fe78cd02cc8e3647a06833666568a430c04d030acac8d13ba00",
+    "all_ground_truth_ids_in_index": true
+  }
+}

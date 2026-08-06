@@ -69,7 +69,12 @@ All values below are rendered from the source, evaluation, quality, and freshnes
 | `mean_judge_score` | 5 |
 | `ragas` | {"skipped": "Set RUN_RAGAS=1 to enable the slower Ragas pass."} |
 
-`retrieval_hit_rate` checks whether a retrieved document ID occurs in the sample's clean `ground_truth_doc_ids`; answer metrics compare the returned answer with ground truth derived from that same clean row.
+### Metric definitions
+
+- `retrieval_hit_rate`: mean of the per-question retrieval hit flag. A hit means at least one retrieved `paper_id` occurs in that question's clean `ground_truth_doc_ids`.
+- `mean_token_f1`: mean harmonic score of token precision and recall after whitespace normalization and lower-casing. The current implementation uses unique token sets, so it measures lexical overlap rather than semantic equivalence or token order.
+- `judge_accuracy`: fraction of answers that the structured LLM judge marks `correct=true`; if the provider is unavailable, the evaluator records a token-F1-based fallback reason in each answer.
+- `mean_judge_score`: mean structured judge score on the 1–5 scale.
 
 ## Data quality
 
@@ -108,7 +113,7 @@ These values are the control signals to compare with corrupted and repaired runs
 | Signal | Value |
 | --- | --- |
 | Timestamp source | cleaned published field sourced from Crossref |
-| Observation time | 2026-08-06T09:11:38.270792+00:00 |
+| Observation time | 2026-08-06T09:37:18.836400+00:00 |
 | Threshold (days) | 180 |
 | Latest publication | 2026-08-01 |
 | Oldest publication | 2026-02-12 |

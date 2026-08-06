@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-06T09:11:38.270792+00:00",
+  "generated_at": "2026-08-06T09:37:18.836400+00:00",
   "timestamp_source": "cleaned published field sourced from Crossref",
   "age_days_source": "cleaned age_days field materialized during cleaning",
   "freshness_basis": "published supplies date bounds; age_days is compared with the threshold",

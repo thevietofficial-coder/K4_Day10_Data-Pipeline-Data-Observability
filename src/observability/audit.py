@@ -178,3 +178,83 @@ def build_baseline_artifact_audit(
     }
     write_json(Path(output_path), payload)
     return payload
+
+
+def write_baseline_checkpoint(
+    output_path: Path,
+    metrics: dict[str, Any],
+    answers: list[dict[str, Any]],
+    quality: dict[str, Any],
+    freshness: dict[str, Any],
+    artifact_audit: dict[str, Any],
+) -> dict[str, Any]:
+    """Freeze baseline metrics/signals used by the later corruption comparison."""
+    sample_count = int(metrics.get("samples", -1))
+    if sample_count != len(answers):
+        raise ValueError(
+            f"Baseline sample count does not match answers: {sample_count} != {len(answers)}"
+        )
+
+    hits = [answer for answer in answers if bool(answer.get("retrieval_hit"))]
+    misses = [answer for answer in answers if not bool(answer.get("retrieval_hit"))]
+    observed_hit_rate = len(hits) / len(answers) if answers else 0.0
+    metric_hit_rate = float(metrics.get("retrieval_hit_rate", -1.0))
+    if abs(observed_hit_rate - metric_hit_rate) > 1e-12:
+        raise ValueError(
+            "Baseline retrieval_hit_rate does not match answers: "
+            f"{metric_hit_rate} != {observed_hit_rate}"
+        )
+
+    fallback_judges = [
+        answer
+        for answer in answers
+        if "fallback heuristic" in str(answer.get("judge", {}).get("reasoning", "")).lower()
+    ]
+    metric_names = (
+        "samples",
+        "retrieval_hit_rate",
+        "mean_token_f1",
+        "judge_accuracy",
+        "mean_judge_score",
+        "ragas",
+    )
+    payload = {
+        "generated_at": datetime.now(UTC).isoformat(),
+        "checkpoint": "baseline",
+        "ready_for_comparison": bool(
+            artifact_audit.get("status") == "pass"
+            and quality.get("passed", quality.get("success", False))
+            and freshness.get("is_fresh", False)
+            and sample_count > 0
+        ),
+        "metrics": {name: metrics.get(name) for name in metric_names},
+        "answer_evidence": {
+            "answers": len(answers),
+            "retrieval_hits": len(hits),
+            "retrieval_misses": len(misses),
+            "fallback_judges": len(fallback_judges),
+            "example_hit_id": hits[0].get("id") if hits else None,
+            "example_miss_id": misses[0].get("id") if misses else None,
+        },
+        "quality": {
+            "status": quality.get("status"),
+            "signals": quality.get("signals", {}),
+        },
+        "freshness": freshness,
+        "artifact_audit": {
+            "status": artifact_audit.get("status"),
+            "collection_name": artifact_audit.get("index", {}).get("collection_name"),
+            "manifest_document_count": artifact_audit.get("index", {}).get(
+                "manifest_document_count"
+            ),
+            "collection_document_count": artifact_audit.get("index", {}).get(
+                "collection_document_count"
+            ),
+            "test_set_sha256": artifact_audit.get("test_set", {}).get("sha256"),
+            "all_ground_truth_ids_in_index": artifact_audit.get("test_set", {}).get(
+                "all_ground_truth_ids_in_index"
+            ),
+        },
+    }
+    write_json(Path(output_path), payload)
+    return payload
